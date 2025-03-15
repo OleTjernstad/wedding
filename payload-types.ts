@@ -126,7 +126,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
-  role: 'admin' | 'couple' | 'guest';
+  role: 'admin' | 'couple';
   name: string;
   updatedAt: string;
   createdAt: string;
@@ -153,8 +153,14 @@ export interface Gift {
   store: string;
   link: string;
   category: string | Category;
+  /**
+   * How many of this gift are wanted
+   */
+  quantity: number;
   reserved?: boolean | null;
-  reservation?: (string | null) | GiftReservation;
+  partiallyReserved?: boolean | null;
+  reservedQuantity?: number | null;
+  reservation?: (string | GiftReservation)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -180,8 +186,7 @@ export interface Category {
 export interface GiftReservation {
   id: string;
   gift: string | Gift;
-  guestName: string;
-  guestEmail: string;
+  quantity: number;
   message?: string | null;
   /**
    * If checked, the guest name will not be shown to the couple
@@ -285,7 +290,10 @@ export interface GiftsSelect<T extends boolean = true> {
   store?: T;
   link?: T;
   category?: T;
+  quantity?: T;
   reserved?: T;
+  partiallyReserved?: T;
+  reservedQuantity?: T;
   reservation?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -307,8 +315,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface GiftReservationsSelect<T extends boolean = true> {
   gift?: T;
-  guestName?: T;
-  guestEmail?: T;
+  quantity?: T;
   message?: T;
   anonymous?: T;
   updatedAt?: T;

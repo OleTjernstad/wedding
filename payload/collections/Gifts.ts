@@ -42,6 +42,16 @@ const Gifts: CollectionConfig = {
       required: true,
     },
     {
+      name: "quantity",
+      type: "number",
+      required: true,
+      min: 1,
+      defaultValue: 1,
+      admin: {
+        description: "How many of this gift are wanted",
+      },
+    },
+    {
       name: "reserved",
       type: "checkbox",
       defaultValue: false,
@@ -51,43 +61,66 @@ const Gifts: CollectionConfig = {
       },
     },
     {
+      name: "partiallyReserved",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+      },
+    },
+    {
+      name: "reservedQuantity",
+      type: "number",
+      defaultValue: 0,
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+      },
+    },
+    {
       name: "reservation",
       type: "relationship",
       relationTo: "gift-reservations",
-      hasMany: false,
+      hasMany: true,
       admin: {
         readOnly: true,
       },
     },
   ],
   hooks: {
-    // Update reserved status when a reservation is created or deleted
     afterChange: [
-      async ({ doc, req, operation, previousDoc }) => {
+      async ({ doc, req, operation }) => {
         if (operation === "update") {
           const payload = req.payload;
 
-          // If reservation was added
-          if (!previousDoc.reservation && doc.reservation) {
-            await payload.update({
-              collection: "gifts",
-              id: doc.id,
-              data: {
-                reserved: true,
+          // Calculate total reserved quantity
+          const reservations = await payload.find({
+            collection: "gift-reservations",
+            where: {
+              gift: {
+                equals: doc.id,
               },
-            });
-          }
+            },
+          });
 
-          // If reservation was removed
-          if (previousDoc.reservation && !doc.reservation) {
-            await payload.update({
-              collection: "gifts",
-              id: doc.id,
-              data: {
-                reserved: false,
-              },
-            });
-          }
+          const totalReservedQuantity = reservations.docs.reduce(
+            (sum, res) => sum + (res.quantity || 0),
+            0
+          );
+
+          // Update reservation status
+          await payload.update({
+            collection: "gifts",
+            id: doc.id,
+            data: {
+              reservedQuantity: totalReservedQuantity,
+              reserved: totalReservedQuantity >= doc.quantity,
+              partiallyReserved:
+                totalReservedQuantity > 0 &&
+                totalReservedQuantity < doc.quantity,
+            },
+          });
         }
       },
     ],

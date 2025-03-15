@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate:importmap": "payload generate:importmap",
+    "generate:types": "payload generate:types"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

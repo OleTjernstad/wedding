@@ -3,15 +3,17 @@ import type { CollectionConfig } from "payload";
 const GiftReservations: CollectionConfig = {
   slug: "gift-reservations",
   admin: {
-    useAsTitle: "guestName",
-    defaultColumns: ["guestName", "guestEmail", "gift", "createdAt"],
+    useAsTitle: "gift",
+    defaultColumns: ["gift", "createdAt", "quantity"],
   },
   access: {
     // Anyone can create a reservation
     create: () => true,
     // Only admins and couple can read all reservations
     read: ({ req: { user } }) => {
-      if (["admin", "couple"].includes(user?.role)) return true;
+      if (user?.role) {
+        if (["admin", "couple"].includes(user?.role)) return true;
+      }
 
       // Guests can only read their own reservations
       return {
@@ -21,9 +23,11 @@ const GiftReservations: CollectionConfig = {
       };
     },
     // Only admins and couple can update reservations
-    update: ({ req: { user } }) => ["admin", "couple"].includes(user?.role),
+    update: ({ req: { user } }) =>
+      user?.role ? ["admin", "couple"].includes(user?.role) : false,
     // Only admins and couple can delete reservations
-    delete: ({ req: { user } }) => ["admin", "couple"].includes(user?.role),
+    delete: ({ req: { user } }) =>
+      user?.role ? ["admin", "couple"].includes(user?.role) : false,
   },
   fields: [
     {
@@ -33,14 +37,11 @@ const GiftReservations: CollectionConfig = {
       required: true,
     },
     {
-      name: "guestName",
-      type: "text",
+      name: "quantity",
+      type: "number",
       required: true,
-    },
-    {
-      name: "guestEmail",
-      type: "email",
-      required: true,
+      min: 1,
+      defaultValue: 1,
     },
     {
       name: "message",
@@ -49,7 +50,7 @@ const GiftReservations: CollectionConfig = {
     {
       name: "anonymous",
       type: "checkbox",
-      defaultValue: false,
+      defaultValue: true,
       admin: {
         description:
           "If checked, the guest name will not be shown to the couple",
@@ -60,16 +61,41 @@ const GiftReservations: CollectionConfig = {
     // Update the gift's reservation field when a reservation is created
     afterChange: [
       async ({ doc, req, operation }) => {
-        if (operation === "create") {
+        if (operation === "create" || operation === "update") {
           const payload = req.payload;
 
-          // Update the gift to link to this reservation
+          // Find all reservations for the gift
+          const reservations = await payload.find({
+            collection: "gift-reservations",
+            where: {
+              gift: {
+                equals: doc.gift,
+              },
+            },
+          });
+
+          // Calculate total reserved quantity
+          const totalReservedQuantity = reservations.docs.reduce(
+            (sum, res) => sum + (res.quantity || 0),
+            0
+          );
+
+          // Find the gift to update its reserved status
+          const gift = await payload.findByID({
+            collection: "gifts",
+            id: doc.gift,
+          });
+
+          // Update the gift's reserved and partially reserved status
           await payload.update({
             collection: "gifts",
             id: doc.gift,
             data: {
-              reservation: doc.id,
-              reserved: true,
+              reservedQuantity: totalReservedQuantity,
+              reserved: totalReservedQuantity >= gift.quantity,
+              partiallyReserved:
+                totalReservedQuantity > 0 &&
+                totalReservedQuantity < gift.quantity,
             },
           });
         }
@@ -86,14 +112,43 @@ const GiftReservations: CollectionConfig = {
           id,
         });
 
-        if (reservation && reservation.gift) {
-          // Update the gift to remove the reservation
+        if (
+          reservation &&
+          reservation.gift &&
+          typeof reservation.gift === "string"
+        ) {
+          // Find all reservations for the gift
+          const reservations = await payload.find({
+            collection: "gift-reservations",
+            where: {
+              gift: {
+                equals: reservation.gift,
+              },
+            },
+          });
+
+          // Calculate total reserved quantity excluding the deleted reservation
+          const totalReservedQuantity = reservations.docs.reduce(
+            (sum, res) => sum + (res.id !== id ? res.quantity || 0 : 0),
+            0
+          );
+
+          // Find the gift to update its reserved status
+          const gift = await payload.findByID({
+            collection: "gifts",
+            id: reservation.gift,
+          });
+
+          // Update the gift's reserved and partially reserved status
           await payload.update({
             collection: "gifts",
             id: reservation.gift,
             data: {
-              reservation: null,
-              reserved: false,
+              reservedQuantity: totalReservedQuantity,
+              reserved: totalReservedQuantity >= gift.quantity,
+              partiallyReserved:
+                totalReservedQuantity > 0 &&
+                totalReservedQuantity < gift.quantity,
             },
           });
         }
