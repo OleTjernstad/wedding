@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { authenticated } from "@/access/authenticated";
 
 const Categories: CollectionConfig = {
   slug: "categories",
@@ -9,9 +10,9 @@ const Categories: CollectionConfig = {
     // Anyone can read categories
     read: () => true,
     // Only admins and couple can create, update, delete
-    create: ({ req: { user } }) => ["admin", "couple"].includes(user?.role),
-    update: ({ req: { user } }) => ["admin", "couple"].includes(user?.role),
-    delete: ({ req: { user } }) => ["admin", "couple"].includes(user?.role),
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     {

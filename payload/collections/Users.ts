@@ -51,15 +51,11 @@ const Users: CollectionConfig = {
           value: "admin",
         },
         {
-          label: "Couple",
+          label: "Oss",
           value: "couple",
         },
-        {
-          label: "Guest",
-          value: "guest",
-        },
       ],
-      defaultValue: "guest",
+      defaultValue: "couple",
       required: true,
       admin: {
         position: "sidebar",
