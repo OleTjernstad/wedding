@@ -11,57 +11,57 @@ export async function getGifts({
   sort = "name",
   order = "asc",
 }: {
-  category?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-  sort?: string;
-  order?: "asc" | "desc";
+  category?: string
+  search?: string
+  page?: number
+  limit?: number
+  sort?: string
+  order?: "asc" | "desc"
 } = {}) {
   // Build query parameters
-  const params = new URLSearchParams();
+  const params = new URLSearchParams()
 
-  if (category) params.append("category", category);
-  if (search) params.append("search", search);
-  if (page) params.append("page", page.toString());
-  if (limit) params.append("limit", limit.toString());
-  if (sort) params.append("sort", sort);
-  if (order) params.append("order", order);
+  if (category) params.append("category", category)
+  if (search) params.append("search", search)
+  if (page) params.append("page", page.toString())
+  if (limit) params.append("limit", limit.toString())
+  if (sort) params.append("sort", sort)
+  if (order) params.append("order", order)
 
   // Make API request
-  const response = await fetch(`/api/gifts?${params.toString()}`);
+  const response = await fetch(`/api/registry/gifts?${params.toString()}`)
 
   if (!response.ok) {
-    throw new Error("Failed to fetch gifts");
+    throw new Error("Failed to fetch gifts")
   }
 
-  return response.json();
+  return response.json()
 }
 
 /**
  * Fetch all categories
  */
 export async function getCategories() {
-  const response = await fetch("/api/categories");
+  const response = await fetch("/api/registry/categories")
 
   if (!response.ok) {
-    throw new Error("Failed to fetch categories");
+    throw new Error("Failed to fetch categories")
   }
 
-  return response.json();
+  return response.json()
 }
 
 /**
  * Fetch registry settings
  */
 export async function getRegistrySettings() {
-  const response = await fetch("/api/settings");
+  const response = await fetch("/api/registry/settings")
 
   if (!response.ok) {
-    throw new Error("Failed to fetch registry settings");
+    throw new Error("Failed to fetch registry settings")
   }
 
-  return response.json();
+  return response.json()
 }
 
 /**
@@ -74,11 +74,11 @@ export async function reserveGift({
   message,
   anonymous,
 }: {
-  giftId: string;
-  guestName: string;
-  guestEmail: string;
-  message?: string;
-  anonymous?: boolean;
+  giftId: string
+  guestName: string
+  guestEmail: string
+  message?: string
+  anonymous?: boolean
 }) {
   const response = await fetch("/api/registry/reserve", {
     method: "POST",
@@ -92,12 +92,13 @@ export async function reserveGift({
       message,
       anonymous,
     }),
-  });
+  })
 
   if (!response.ok) {
-    const data = await response.json();
-    throw new Error(data.error || "Failed to reserve gift");
+    const data = await response.json()
+    throw new Error(data.error || "Failed to reserve gift")
   }
 
-  return response.json();
+  return response.json()
 }
+

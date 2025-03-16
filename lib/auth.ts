@@ -1,27 +1,27 @@
-import { cookies } from "next/headers";
-import { getPayloadClient } from "./payload";
+import { cookies } from "next/headers"
+import { getPayloadClient } from "./payload"
 
 export async function getCurrentUser() {
   try {
     // Get the token from cookies
-    const cookieStore = await cookies();
-    const token = cookieStore.get("payload-token")?.value;
+    const cookieStore = cookies()
+    const token = cookieStore.get("payload-token")?.value
 
     if (!token) {
-      return null;
+      return null
     }
 
     // Get Payload instance
-    const payload = await getPayloadClient();
+    const payload = await getPayloadClient()
 
     // Verify and get the user
     const { user } = await payload.verifyToken({
       token,
       collection: "users",
-    });
+    })
 
     if (!user) {
-      return null;
+      return null
     }
 
     // Return user data (excluding sensitive information)
@@ -30,23 +30,24 @@ export async function getCurrentUser() {
       email: user.email,
       name: user.name,
       role: user.role,
-    };
+    }
   } catch (error) {
-    console.error("Error getting current user:", error);
-    return null;
+    console.error("Error getting current user:", error)
+    return null
   }
 }
 
 export async function isAuthenticated() {
-  const user = await getCurrentUser();
-  return !!user;
+  const user = await getCurrentUser()
+  return !!user
 }
 
 export async function hasRole(roles: string[]) {
-  const user = await getCurrentUser();
-  return user && roles.includes(user.role);
+  const user = await getCurrentUser()
+  return user && roles.includes(user.role)
 }
 
 export async function isAdminOrCouple() {
-  return hasRole(["admin", "couple"]);
+  return hasRole(["admin", "couple"])
 }
+
