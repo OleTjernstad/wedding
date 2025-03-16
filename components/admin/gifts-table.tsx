@@ -103,6 +103,19 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
       },
     },
     {
+      accessorKey: "link",
+      header: "Link",
+      cell: ({ row }) => (
+        <a
+          href={row.getValue("link")}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {row.getValue("link")}
+        </a>
+      ),
+    },
+    {
       id: "actions",
       cell: ({ row }) => {
         const gift = row.original;
