@@ -33,10 +33,7 @@ export async function getGifts(): Promise<GiftWithCategory[]> {
 }
 
 // Get public gifts (for the public registry)
-export async function getPublicGifts(
-  categoryId?: string,
-  search?: string
-): Promise<Gift[]> {
+export async function getPublicGifts(categoryId?: string, search?: string) {
   try {
     const where: any = undefined;
     if (categoryId) where.categoryId = categoryId;
@@ -48,19 +45,14 @@ export async function getPublicGifts(
       orderBy: {
         name: "asc",
       },
+      include: {
+        category: true,
+      },
     });
 
     console.log({ gifts });
 
-    return gifts.map((gift) => ({
-      id: gift.id,
-      name: gift.name,
-      description: gift.description || "",
-      quantity: gift.quantity,
-      reservedQuantity: gift.reservedQuantity,
-      categoryId: gift.categoryId,
-      imageUrl: gift.imageUrl || undefined,
-    }));
+    return gifts;
   } catch (error) {
     console.error("Error fetching public gifts:", error);
     throw new Error("Failed to fetch public gifts");
