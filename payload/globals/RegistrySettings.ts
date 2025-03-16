@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { authenticated } from "@/access/authenticated";
 
 const RegistrySettings: GlobalConfig = {
   slug: "registry-settings",
@@ -6,7 +7,7 @@ const RegistrySettings: GlobalConfig = {
     // Anyone can read registry settings
     read: () => true,
     // Only admins and couple can update
-    update: ({ req: { user } }) => ["admin", "couple"].includes(user?.role),
+    update: authenticated,
   },
   fields: [
     {
