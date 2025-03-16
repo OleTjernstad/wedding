@@ -64,26 +64,26 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
   >[] = [
     {
       accessorKey: "name",
-      header: "Name",
+      header: "Navn",
       cell: ({ row }) => (
         <div className="font-medium">{row.getValue("name")}</div>
       ),
     },
     {
       accessorKey: "categoryName",
-      header: "Category",
+      header: "Kategori",
       cell: ({ row }) => (
         <Badge variant="outline">{row.getValue("categoryName")}</Badge>
       ),
     },
     {
       accessorKey: "quantity",
-      header: "Quantity",
+      header: "Antall",
       cell: ({ row }) => row.getValue("quantity"),
     },
     {
       accessorKey: "reservedQuantity",
-      header: "Reserved",
+      header: "Reservert",
       cell: ({ row }) => row.getValue("reservedQuantity"),
     },
     {
@@ -94,17 +94,17 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
         const available = gift.quantity - gift.reservedQuantity;
 
         if (available === 0) {
-          return <Badge className="bg-red-500">Fully Reserved</Badge>;
+          return <Badge className="bg-red-500">Fullt reservert</Badge>;
         } else if (gift.reservedQuantity > 0) {
-          return <Badge className="bg-yellow-500">Partially Reserved</Badge>;
+          return <Badge className="bg-yellow-500">Delvis reservert</Badge>;
         } else {
-          return <Badge className="bg-green-500">Available</Badge>;
+          return <Badge className="bg-green-500">Tilgjengelig</Badge>;
         }
       },
     },
     {
       accessorKey: "link",
-      header: "Link",
+      header: "Lenke",
       cell: ({ row }) => (
         <a
           href={row.getValue("link")}
@@ -124,7 +124,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Åpne meny</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -132,7 +132,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
               <DropdownMenuItem asChild>
                 <Link href={`/admin/gifts/${gift.id}`}>
                   <Edit className="mr-2 h-4 w-4" />
-                  Edit
+                  Rediger
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -140,7 +140,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
                 onClick={() => setDeleteGiftId(gift.id)}
               >
                 <Trash className="mr-2 h-4 w-4" />
-                Delete
+                Slett
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -201,7 +201,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter gifts..."
+          placeholder="Filtrer gaver..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -252,7 +252,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No gifts found.
+                  Ingen gaver funnet.
                 </TableCell>
               </TableRow>
             )}
@@ -261,7 +261,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          Side {table.getState().pagination.pageIndex + 1} av{" "}
           {table.getPageCount()}
         </div>
         <Button
@@ -270,7 +270,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          Forrige
         </Button>
         <Button
           variant="outline"
@@ -278,7 +278,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          Neste
         </Button>
       </div>
 
@@ -288,19 +288,19 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              gift and all associated reservations.
+              Denne handlingen kan ikke angres. Dette vil permanent slette gaven
+              og alle tilknyttede reservasjoner.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteGift}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete
+              Slett
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

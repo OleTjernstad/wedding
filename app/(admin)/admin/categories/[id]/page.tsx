@@ -6,8 +6,8 @@ import { getCategoryById } from "@/lib/category-service";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Edit Category",
-  description: "Edit an existing gift category",
+  title: "Rediger Kategori",
+  description: "Rediger en eksisterende gave kategori",
 };
 
 export type paramsType = Promise<{ id: string }>;
@@ -24,8 +24,8 @@ export default async function EditCategoryPage(props: { params: paramsType }) {
   return (
     <DashboardShell>
       <DashboardHeader
-        heading="Edit Category"
-        description="Edit an existing gift category"
+        heading="Rediger Kategori"
+        description="Rediger en eksisterende gave kategori"
       />
       <div className="grid gap-8">
         <CategoryForm category={category} />

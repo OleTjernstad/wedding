@@ -30,11 +30,11 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const giftFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Navn er påkrevd"),
   description: z.string().optional(),
-  quantity: z.coerce.number().min(1, "Quantity must be at least 1"),
-  categoryId: z.string().min(1, "Category is required"),
-  link: z.string().url("Must be a valid URL"),
+  quantity: z.coerce.number().min(1, "Antall må være minst 1"),
+  categoryId: z.string().min(1, "Kategori er påkrevd"),
+  link: z.string().url("Må være en gyldig URL"),
 });
 
 type GiftFormValues = z.infer<typeof giftFormSchema>;
@@ -84,8 +84,8 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
         }
 
         toast({
-          title: "Gift updated",
-          description: "The gift has been updated successfully.",
+          title: "Gave oppdatert",
+          description: "Gaven har blitt oppdatert.",
         });
       } else {
         // Create new gift
@@ -105,8 +105,8 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
         }
 
         toast({
-          title: "Gift created",
-          description: "The gift has been created successfully.",
+          title: "Gave opprettet",
+          description: "Gaven har blitt opprettet.",
         });
       }
 
@@ -115,8 +115,8 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
     } catch (error) {
       console.error("Error saving gift:", error);
       toast({
-        title: "Error",
-        description: "Failed to save gift. Please try again.",
+        title: "Feil",
+        description: "Kunne ikke lagre gaven. Vennligst prøv igjen.",
         variant: "destructive",
       });
     } finally {
@@ -132,12 +132,12 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Navn</FormLabel>
               <FormControl>
-                <Input placeholder="Enter gift name" {...field} />
+                <Input placeholder="Skriv inn navn på gaven" {...field} />
               </FormControl>
               <FormDescription>
-                The name of the gift as it will appear in the registry.
+                Navnet på gaven slik det vil vises i registeret.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -149,16 +149,16 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Beskrivelse</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter gift description"
+                  placeholder="Skriv inn beskrivelse av gaven"
                   className="min-h-[100px]"
                   {...field}
                 />
               </FormControl>
               <FormDescription>
-                A detailed description of the gift.
+                En detaljert beskrivelse av gaven.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -171,7 +171,7 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
             name="quantity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantity</FormLabel>
+                <FormLabel>Antall</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -180,7 +180,7 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
                   />
                 </FormControl>
                 <FormDescription>
-                  The total quantity of this gift available.
+                  Totalt antall av denne gaven tilgjengelig.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -192,14 +192,14 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
             name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>Kategori</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue placeholder="Velg en kategori" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -211,7 +211,7 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  The category this gift belongs to.
+                  Kategoriene denne gaven tilhører.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -224,11 +224,11 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
           name="link"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Link</FormLabel>
+              <FormLabel>Lenke</FormLabel>
               <FormControl>
-                <Input placeholder="Enter gift link" {...field} />
+                <Input placeholder="Skriv inn lenke til gaven" {...field} />
               </FormControl>
-              <FormDescription>A URL to the gift.</FormDescription>
+              <FormDescription>En URL til gaven.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -236,14 +236,14 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
 
         <div className="flex gap-4">
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : gift ? "Update Gift" : "Create Gift"}
+            {isLoading ? "Lagrer..." : gift ? "Oppdater gave" : "Opprett gave"}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push("/admin/gifts")}
           >
-            Cancel
+            Avbryt
           </Button>
         </div>
       </form>

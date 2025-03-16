@@ -1,32 +1,34 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { DashboardHeader } from "@/components/admin/dashboard-header"
-import { DashboardShell } from "@/components/admin/dashboard-shell"
-import { CategoriesTable } from "@/components/admin/categories-table"
-import { getCategories } from "@/lib/category-service"
+import { Button } from "@/components/ui/button";
+import { CategoriesTable } from "@/components/admin/categories-table";
+import { DashboardHeader } from "@/components/admin/dashboard-header";
+import { DashboardShell } from "@/components/admin/dashboard-shell";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { Plus } from "lucide-react";
+import { getCategories } from "@/lib/category-service";
 
 export const metadata: Metadata = {
-  title: "Categories",
-  description: "Manage gift categories",
-}
+  title: "Kategorier",
+  description: "Administrer gave kategorier",
+};
 
 export default async function CategoriesPage() {
-  const categories = await getCategories()
+  const categories = await getCategories();
 
   return (
     <DashboardShell>
-      <DashboardHeader heading="Categories" description="Manage gift categories">
+      <DashboardHeader
+        heading="Kategorier"
+        description="Administrer gave kategorier"
+      >
         <Button asChild>
           <Link href="/admin/categories/new">
             <Plus className="mr-2 h-4 w-4" />
-            Add Category
+            Legg til Kategori
           </Link>
         </Button>
       </DashboardHeader>
       <CategoriesTable categories={categories} />
     </DashboardShell>
-  )
+  );
 }
-

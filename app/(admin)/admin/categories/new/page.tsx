@@ -1,21 +1,23 @@
-import type { Metadata } from "next"
-import { DashboardHeader } from "@/components/admin/dashboard-header"
-import { DashboardShell } from "@/components/admin/dashboard-shell"
-import { CategoryForm } from "@/components/admin/category-form"
+import { CategoryForm } from "@/components/admin/category-form";
+import { DashboardHeader } from "@/components/admin/dashboard-header";
+import { DashboardShell } from "@/components/admin/dashboard-shell";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Add Category",
-  description: "Add a new gift category",
-}
+  title: "Legg til Kategori",
+  description: "Legg til en ny gave kategori",
+};
 
 export default function NewCategoryPage() {
   return (
     <DashboardShell>
-      <DashboardHeader heading="Add Category" description="Add a new gift category" />
+      <DashboardHeader
+        heading="Legg til Kategori"
+        description="Legg til en ny gave kategori"
+      />
       <div className="grid gap-8">
         <CategoryForm />
       </div>
     </DashboardShell>
-  )
+  );
 }
-

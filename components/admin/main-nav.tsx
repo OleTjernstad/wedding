@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { GiftIcon } from "lucide-react"
+import { GiftIcon } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 export function MainNav() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div className="flex gap-6 md:gap-10">
       <Link href="/admin" className="flex items-center space-x-2">
         <GiftIcon className="h-6 w-6" />
-        <span className="font-bold inline-block">Gift Registry</span>
+        <span className="font-bold inline-block">Gaveliste</span>
       </Link>
       <nav className="flex gap-6">
         <Link
           href="/admin"
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
-            pathname === "/admin" ? "text-primary" : "text-muted-foreground",
+            pathname === "/admin" ? "text-primary" : "text-muted-foreground"
           )}
         >
-          Dashboard
+          Oversikt
         </Link>
         <Link
           href="/admin/gifts"
@@ -30,42 +30,46 @@ export function MainNav() {
             "text-sm font-medium transition-colors hover:text-primary",
             pathname === "/admin/gifts" || pathname.startsWith("/admin/gifts/")
               ? "text-primary"
-              : "text-muted-foreground",
+              : "text-muted-foreground"
           )}
         >
-          Gifts
+          Gaver
         </Link>
         <Link
           href="/admin/categories"
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
-            pathname === "/admin/categories" || pathname.startsWith("/admin/categories/")
+            pathname === "/admin/categories" ||
+              pathname.startsWith("/admin/categories/")
               ? "text-primary"
-              : "text-muted-foreground",
+              : "text-muted-foreground"
           )}
         >
-          Categories
+          Kategorier
         </Link>
         <Link
           href="/admin/reservations"
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
-            pathname === "/admin/reservations" ? "text-primary" : "text-muted-foreground",
+            pathname === "/admin/reservations"
+              ? "text-primary"
+              : "text-muted-foreground"
           )}
         >
-          Reservations
+          Reservasjoner
         </Link>
         <Link
           href="/admin/settings"
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
-            pathname === "/admin/settings" ? "text-primary" : "text-muted-foreground",
+            pathname === "/admin/settings"
+              ? "text-primary"
+              : "text-muted-foreground"
           )}
         >
-          Settings
+          Innstillinger
         </Link>
       </nav>
     </div>
-  )
+  );
 }
-
