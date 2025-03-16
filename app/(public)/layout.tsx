@@ -1,27 +1,28 @@
-import "../globals.css";
+import "./globals.css";
 
-import { Inter } from "next/font/google";
-import type { Metadata } from "next";
 import type React from "react";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Gift Registry Administration",
-  description: "Admin panel for managing gift registry",
+export const metadata = {
+  title: "Miriam & Ole Tosten - Bryllupsliste",
+  description: "Bryllupsliste for Miriam & Ole Tosten",
   generator: "v0.dev",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="no">
-      <body className={inter.className}>
+    <html lang="no" suppressHydrationWarning>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -29,7 +30,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>
