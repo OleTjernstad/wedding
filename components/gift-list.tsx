@@ -6,14 +6,14 @@ import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import GiftCard from "@/components/gift-card";
 import { Loader2 } from "lucide-react";
-import { getGifts } from "@/lib/api";
+import { getGifts } from "@/utils/get-public-gifts";
 
 interface GiftListProps {
-  category?: string;
+  categoryId?: string;
   searchQuery?: string;
 }
 
-export default function GiftList({ category, searchQuery }: GiftListProps) {
+export default function GiftList({ categoryId, searchQuery }: GiftListProps) {
   const [gifts, setGifts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export default function GiftList({ category, searchQuery }: GiftListProps) {
         setError(null);
 
         const result = await getGifts({
-          category: category === "all" ? "" : category,
+          categoryId: categoryId,
           search: searchQuery,
         });
 
@@ -39,7 +39,7 @@ export default function GiftList({ category, searchQuery }: GiftListProps) {
     }
 
     loadGifts();
-  }, [category, searchQuery]);
+  }, [categoryId, searchQuery]);
 
   // Handle gift reservation
   const handleGiftReserved = (giftId: string) => {
@@ -84,11 +84,7 @@ export default function GiftList({ category, searchQuery }: GiftListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {gifts.map((gift) => (
-        <GiftCard
-          key={gift.id}
-          gift={gift}
-          onReserved={() => handleGiftReserved(gift.id)}
-        />
+        <GiftCard key={gift.id} gift={gift} />
       ))}
     </div>
   );

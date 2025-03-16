@@ -53,12 +53,12 @@ export default function CategoryTabs({
       </TabsList>
 
       <TabsContent value="all" className="mt-6">
-        <GiftList category="all" searchQuery={searchQuery} />
+        <GiftList searchQuery={searchQuery} />
       </TabsContent>
 
       {categories.map((category) => (
         <TabsContent key={category.id} value={category.id} className="mt-6">
-          <GiftList category={category.id} searchQuery={searchQuery} />
+          <GiftList categoryId={category.id} searchQuery={searchQuery} />
         </TabsContent>
       ))}
     </Tabs>

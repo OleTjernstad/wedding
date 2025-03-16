@@ -1,6 +1,7 @@
-import { db } from "@/lib/db"
-import type { Gift, GiftStats, GiftWithCategory } from "@/lib/types"
-import { v4 as uuidv4 } from "uuid"
+import type { Gift, GiftStats, GiftWithCategory } from "@/lib/types";
+
+import { db } from "@/lib/db";
+import { v4 as uuidv4 } from "uuid";
 
 // Get all gifts with category information
 export async function getGifts(): Promise<GiftWithCategory[]> {
@@ -9,7 +10,7 @@ export async function getGifts(): Promise<GiftWithCategory[]> {
       include: {
         category: true,
       },
-    })
+    });
 
     return gifts.map((gift) => ({
       id: gift.id,
@@ -24,24 +25,29 @@ export async function getGifts(): Promise<GiftWithCategory[]> {
         name: gift.category.name,
         description: gift.category.description || undefined,
       },
-    }))
+    }));
   } catch (error) {
-    console.error("Error fetching gifts:", error)
-    throw new Error("Failed to fetch gifts")
+    console.error("Error fetching gifts:", error);
+    throw new Error("Failed to fetch gifts");
   }
 }
 
 // Get public gifts (for the public registry)
-export async function getPublicGifts(categoryId?: string): Promise<Gift[]> {
+export async function getPublicGifts(
+  categoryId?: string,
+  search?: string
+): Promise<Gift[]> {
   try {
-    const where = categoryId ? { categoryId } : {}
+    const where: any = {};
+    if (categoryId) where.categoryId = categoryId;
+    if (search) where.name = { contains: search, mode: "insensitive" };
 
     const gifts = await db.gift.findMany({
       where,
       orderBy: {
         name: "asc",
       },
-    })
+    });
 
     return gifts.map((gift) => ({
       id: gift.id,
@@ -51,10 +57,10 @@ export async function getPublicGifts(categoryId?: string): Promise<Gift[]> {
       reservedQuantity: gift.reservedQuantity,
       categoryId: gift.categoryId,
       imageUrl: gift.imageUrl || undefined,
-    }))
+    }));
   } catch (error) {
-    console.error("Error fetching public gifts:", error)
-    throw new Error("Failed to fetch public gifts")
+    console.error("Error fetching public gifts:", error);
+    throw new Error("Failed to fetch public gifts");
   }
 }
 
@@ -63,10 +69,10 @@ export async function getGiftById(id: string): Promise<Gift | null> {
   try {
     const gift = await db.gift.findUnique({
       where: { id },
-    })
+    });
 
     if (!gift) {
-      return null
+      return null;
     }
 
     return {
@@ -77,10 +83,10 @@ export async function getGiftById(id: string): Promise<Gift | null> {
       reservedQuantity: gift.reservedQuantity,
       categoryId: gift.categoryId,
       imageUrl: gift.imageUrl || undefined,
-    }
+    };
   } catch (error) {
-    console.error(`Error fetching gift with ID ${id}:`, error)
-    throw new Error("Failed to fetch gift")
+    console.error(`Error fetching gift with ID ${id}:`, error);
+    throw new Error("Failed to fetch gift");
   }
 }
 
@@ -97,7 +103,7 @@ export async function createGift(giftData: Omit<Gift, "id">): Promise<Gift> {
         categoryId: giftData.categoryId,
         imageUrl: giftData.imageUrl,
       },
-    })
+    });
 
     return {
       id: gift.id,
@@ -107,10 +113,10 @@ export async function createGift(giftData: Omit<Gift, "id">): Promise<Gift> {
       reservedQuantity: gift.reservedQuantity,
       categoryId: gift.categoryId,
       imageUrl: gift.imageUrl || undefined,
-    }
+    };
   } catch (error) {
-    console.error("Error creating gift:", error)
-    throw new Error("Failed to create gift")
+    console.error("Error creating gift:", error);
+    throw new Error("Failed to create gift");
   }
 }
 
@@ -127,7 +133,7 @@ export async function updateGift(giftData: Gift): Promise<Gift> {
         categoryId: giftData.categoryId,
         imageUrl: giftData.imageUrl,
       },
-    })
+    });
 
     return {
       id: gift.id,
@@ -137,10 +143,10 @@ export async function updateGift(giftData: Gift): Promise<Gift> {
       reservedQuantity: gift.reservedQuantity,
       categoryId: gift.categoryId,
       imageUrl: gift.imageUrl || undefined,
-    }
+    };
   } catch (error) {
-    console.error(`Error updating gift with ID ${giftData.id}:`, error)
-    throw new Error("Failed to update gift")
+    console.error(`Error updating gift with ID ${giftData.id}:`, error);
+    throw new Error("Failed to update gift");
   }
 }
 
@@ -149,10 +155,10 @@ export async function deleteGift(id: string): Promise<void> {
   try {
     await db.gift.delete({
       where: { id },
-    })
+    });
   } catch (error) {
-    console.error(`Error deleting gift with ID ${id}:`, error)
-    throw new Error("Failed to delete gift")
+    console.error(`Error deleting gift with ID ${id}:`, error);
+    throw new Error("Failed to delete gift");
   }
 }
 
@@ -163,33 +169,45 @@ export async function getGiftStats(): Promise<GiftStats> {
       include: {
         category: true,
       },
-    })
+    });
 
-    const totalGifts = gifts.length
-    const fullyReservedGifts = gifts.filter((gift) => gift.quantity === gift.reservedQuantity).length
+    const totalGifts = gifts.length;
+    const fullyReservedGifts = gifts.filter(
+      (gift) => gift.quantity === gift.reservedQuantity
+    ).length;
     const partiallyReservedGifts = gifts.filter(
-      (gift) => gift.reservedQuantity > 0 && gift.quantity > gift.reservedQuantity,
-    ).length
-    const availableGifts = gifts.filter((gift) => gift.reservedQuantity < gift.quantity).length
+      (gift) =>
+        gift.reservedQuantity > 0 && gift.quantity > gift.reservedQuantity
+    ).length;
+    const availableGifts = gifts.filter(
+      (gift) => gift.reservedQuantity < gift.quantity
+    ).length;
 
     // Group by category
-    const categoriesMap = new Map<string, { name: string; available: number; reserved: number }>()
+    const categoriesMap = new Map<
+      string,
+      { name: string; available: number; reserved: number }
+    >();
 
     gifts.forEach((gift) => {
-      const categoryName = gift.category.name
-      const available = gift.quantity - gift.reservedQuantity
-      const reserved = gift.reservedQuantity
+      const categoryName = gift.category.name;
+      const available = gift.quantity - gift.reservedQuantity;
+      const reserved = gift.reservedQuantity;
 
       if (!categoriesMap.has(categoryName)) {
-        categoriesMap.set(categoryName, { name: categoryName, available: 0, reserved: 0 })
+        categoriesMap.set(categoryName, {
+          name: categoryName,
+          available: 0,
+          reserved: 0,
+        });
       }
 
-      const category = categoriesMap.get(categoryName)!
-      category.available += available
-      category.reserved += reserved
-    })
+      const category = categoriesMap.get(categoryName)!;
+      category.available += available;
+      category.reserved += reserved;
+    });
 
-    const categoryData = Array.from(categoriesMap.values())
+    const categoryData = Array.from(categoriesMap.values());
 
     return {
       totalGifts,
@@ -197,10 +215,9 @@ export async function getGiftStats(): Promise<GiftStats> {
       fullyReservedGifts,
       partiallyReservedGifts,
       categoryData,
-    }
+    };
   } catch (error) {
-    console.error("Error fetching gift statistics:", error)
-    throw new Error("Failed to fetch gift statistics")
+    console.error("Error fetching gift statistics:", error);
+    throw new Error("Failed to fetch gift statistics");
   }
 }
-
