@@ -1,39 +1,27 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Skeleton } from "@/components/ui/skeleton"
-import GiftList from "@/components/gift-list"
-import { getCategories } from "@/lib/api"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
+
+import { Category } from "@/lib/types";
+import GiftList from "@/components/gift-list";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CategoryTabsProps {
-  searchQuery?: string
+  searchQuery?: string;
+  categories: Category[];
 }
 
-export default function CategoryTabs({ searchQuery }: CategoryTabsProps) {
-  const [categories, setCategories] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [activeCategory, setActiveCategory] = useState("all")
-
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        setLoading(true)
-        const result = await getCategories()
-        setCategories(result.docs || [])
-      } catch (err) {
-        console.error("Error loading categories:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadCategories()
-  }, [])
+export default function CategoryTabs({
+  searchQuery,
+  categories,
+}: CategoryTabsProps) {
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   const handleCategoryChange = (value: string) => {
-    setActiveCategory(value)
-  }
+    setActiveCategory(value);
+  };
 
   if (loading) {
     return (
@@ -45,15 +33,20 @@ export default function CategoryTabs({ searchQuery }: CategoryTabsProps) {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <Tabs defaultValue="all" value={activeCategory} onValueChange={handleCategoryChange} className="mb-12">
+    <Tabs
+      defaultValue="all"
+      value={activeCategory}
+      onValueChange={handleCategoryChange}
+      className="mb-12"
+    >
       <TabsList className="bg-purple-50 border border-purple-100">
         <TabsTrigger value="all">Alle gaver</TabsTrigger>
         {categories.map((category) => (
-          <TabsTrigger key={category.id} value={category.slug}>
+          <TabsTrigger key={category.id} value={category.id}>
             {category.name}
           </TabsTrigger>
         ))}
@@ -64,11 +57,10 @@ export default function CategoryTabs({ searchQuery }: CategoryTabsProps) {
       </TabsContent>
 
       {categories.map((category) => (
-        <TabsContent key={category.id} value={category.slug} className="mt-6">
-          <GiftList category={category.slug} searchQuery={searchQuery} />
+        <TabsContent key={category.id} value={category.id} className="mt-6">
+          <GiftList category={category.id} searchQuery={searchQuery} />
         </TabsContent>
       ))}
     </Tabs>
-  )
+  );
 }
-
