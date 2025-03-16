@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     const categoryId = searchParams.get("categoryId");
     const search = searchParams.get("search");
 
+    console.log({ search, categoryId });
     const gifts = await getPublicGifts(
       categoryId || undefined,
       search || undefined

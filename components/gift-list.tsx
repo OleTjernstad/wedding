@@ -29,7 +29,8 @@ export default function GiftList({ categoryId, searchQuery }: GiftListProps) {
           search: searchQuery,
         });
 
-        setGifts(result.docs || []);
+        console.log({ result });
+        setGifts(result || []);
       } catch (err: any) {
         console.error("Error loading gifts:", err);
         setError("Kunne ikke laste gavene. Vennligst prøv igjen senere.");

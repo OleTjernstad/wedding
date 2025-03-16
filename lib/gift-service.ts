@@ -38,7 +38,7 @@ export async function getPublicGifts(
   search?: string
 ): Promise<Gift[]> {
   try {
-    const where: any = {};
+    const where: any = undefined;
     if (categoryId) where.categoryId = categoryId;
     if (search) where.name = { contains: search, mode: "insensitive" };
 
@@ -49,6 +49,8 @@ export async function getPublicGifts(
         name: "asc",
       },
     });
+
+    console.log({ gifts });
 
     return gifts.map((gift) => ({
       id: gift.id,
