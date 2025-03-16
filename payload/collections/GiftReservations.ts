@@ -55,48 +55,6 @@ const GiftReservations: CollectionConfig = {
   ],
   hooks: {
     // Update the gift's reservation field when a reservation is created
-    afterChange: [
-      async ({ doc, req, operation }) => {
-        if (operation === "create" || operation === "update") {
-          const payload = req.payload;
-
-          // Find all reservations for the gift
-          const reservations = await payload.find({
-            collection: "gift-reservations",
-            where: {
-              gift: {
-                equals: doc.gift,
-              },
-            },
-          });
-
-          // Calculate total reserved quantity
-          const totalReservedQuantity = reservations.docs.reduce(
-            (sum, res) => sum + (res.quantity || 0),
-            0
-          );
-
-          // Find the gift to update its reserved status
-          const gift = await payload.findByID({
-            collection: "gifts",
-            id: doc.gift,
-          });
-
-          // Update the gift's reserved and partially reserved status
-          await payload.update({
-            collection: "gifts",
-            id: doc.gift,
-            data: {
-              reservedQuantity: totalReservedQuantity,
-              reserved: totalReservedQuantity >= gift.quantity,
-              partiallyReserved:
-                totalReservedQuantity > 0 &&
-                totalReservedQuantity < gift.quantity,
-            },
-          });
-        }
-      },
-    ],
     // Remove the reservation from the gift when a reservation is deleted
     beforeDelete: [
       async ({ req, id }) => {

@@ -93,7 +93,6 @@ const Gifts: CollectionConfig = {
       async ({ doc, req, operation }) => {
         if (operation === "update") {
           const payload = req.payload;
-
           // Calculate total reserved quantity
           const reservations = await payload.find({
             collection: "gift-reservations",
@@ -103,12 +102,10 @@ const Gifts: CollectionConfig = {
               },
             },
           });
-
           const totalReservedQuantity = reservations.docs.reduce(
             (sum, res) => sum + (res.quantity || 0),
             0
           );
-
           // Update reservation status
           await payload.update({
             collection: "gifts",
