@@ -42,6 +42,7 @@ export async function getPublicGifts(
     if (categoryId) where.categoryId = categoryId;
     if (search) where.name = { contains: search, mode: "insensitive" };
 
+    console.log({ where });
     const gifts = await db.gift.findMany({
       where,
       orderBy: {

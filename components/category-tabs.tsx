@@ -16,25 +16,11 @@ export default function CategoryTabs({
   searchQuery,
   categories,
 }: CategoryTabsProps) {
-  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
 
   const handleCategoryChange = (value: string) => {
     setActiveCategory(value);
   };
-
-  if (loading) {
-    return (
-      <div className="mb-12">
-        <Skeleton className="h-10 w-full mb-6" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-64 w-full" />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Tabs

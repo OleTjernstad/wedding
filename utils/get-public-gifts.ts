@@ -15,7 +15,7 @@ export async function getGifts({
   if (search) params.append("search", search);
 
   // Make API request
-  const response = await fetch(`/api/gifts/public?${params.toString()}`);
+  const response = await fetch(`/api/public-gifts?${params.toString()}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch gifts");

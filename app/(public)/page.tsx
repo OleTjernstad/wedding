@@ -12,7 +12,7 @@ export default async function WeddingRegistry() {
         <p className="text-purple-200 text-sm mt-2">21. juni 2025</p>
         <div className="mt-4">
           <a
-            href="/admin/login"
+            href="/admin"
             className="text-purple-300 text-xs hover:text-white transition-colors"
           >
             Administrasjon
