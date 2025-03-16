@@ -7,13 +7,17 @@ import RegistrySettings from "./payload/globals/RegistrySettings";
 import Users from "./payload/collections/Users";
 import { buildConfig } from "payload";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
-import { mongooseAdapter } from "@payloadcms/db-mongodb";
 import path from "path";
+import { postgresAdapter } from "@payloadcms/db-postgres";
 
 export default buildConfig({
   // Configure the database adapter
-  db: mongooseAdapter({
-    url: process.env.MONGODB_URI || "mongodb://localhost/wedding-registry",
+  db: postgresAdapter({
+    // Postgres-specific arguments go here.
+    // `pool` is required.
+    pool: {
+      connectionString: process.env.DATABASE_URI,
+    },
   }),
 
   // Configure the editor

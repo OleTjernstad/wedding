@@ -85,7 +85,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   globals: {
     'registry-settings': RegistrySetting;
@@ -125,7 +125,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   role: 'admin' | 'couple';
   name: string;
   updatedAt: string;
@@ -147,12 +147,12 @@ export interface User {
  * via the `definition` "gifts".
  */
 export interface Gift {
-  id: string;
+  id: number;
   name: string;
   description?: string | null;
   store: string;
   link: string;
-  category: string | Category;
+  category: number | Category;
   /**
    * How many of this gift are wanted
    */
@@ -160,7 +160,7 @@ export interface Gift {
   reserved?: boolean | null;
   partiallyReserved?: boolean | null;
   reservedQuantity?: number | null;
-  reservation?: (string | GiftReservation)[] | null;
+  reservation?: (number | GiftReservation)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -169,7 +169,7 @@ export interface Gift {
  * via the `definition` "categories".
  */
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   /**
    * This is used for filtering gifts by category
@@ -184,10 +184,9 @@ export interface Category {
  * via the `definition` "gift-reservations".
  */
 export interface GiftReservation {
-  id: string;
-  gift: string | Gift;
+  id: number;
+  gift: number | Gift;
   quantity: number;
-  message?: string | null;
   /**
    * If checked, the guest name will not be shown to the couple
    */
@@ -200,28 +199,28 @@ export interface GiftReservation {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'gifts';
-        value: string | Gift;
+        value: number | Gift;
       } | null)
     | ({
         relationTo: 'categories';
-        value: string | Category;
+        value: number | Category;
       } | null)
     | ({
         relationTo: 'gift-reservations';
-        value: string | GiftReservation;
+        value: number | GiftReservation;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -231,10 +230,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -254,7 +253,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -316,7 +315,6 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface GiftReservationsSelect<T extends boolean = true> {
   gift?: T;
   quantity?: T;
-  message?: T;
   anonymous?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -358,7 +356,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "registry-settings".
  */
 export interface RegistrySetting {
-  id: string;
+  id: number;
   coupleNames: string;
   weddingDate: string;
   welcomeMessage: {

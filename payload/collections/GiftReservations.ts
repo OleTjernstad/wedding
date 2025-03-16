@@ -44,10 +44,6 @@ const GiftReservations: CollectionConfig = {
       defaultValue: 1,
     },
     {
-      name: "message",
-      type: "textarea",
-    },
-    {
       name: "anonymous",
       type: "checkbox",
       defaultValue: true,
