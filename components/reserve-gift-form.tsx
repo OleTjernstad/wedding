@@ -12,7 +12,7 @@ import { useState } from "react";
 interface ReserveGiftFormProps {
   giftId: string;
   giftName: string;
-  onSuccess?: () => void;
+  onSuccess?: (updatedReservationQuantity: number) => void;
 }
 
 export default function ReserveGiftForm({
@@ -47,6 +47,8 @@ export default function ReserveGiftForm({
 
       const data = await response.json();
 
+      console.log({ data });
+
       if (!response.ok) {
         throw new Error(data.error || "Kunne ikke reservere gave");
       }
@@ -55,7 +57,7 @@ export default function ReserveGiftForm({
 
       // Call onSuccess callback if provided
       if (onSuccess) {
-        onSuccess();
+        onSuccess(data.updatedGift.reservedQuantity);
       }
     } catch (err: any) {
       setError(err.message);
@@ -104,17 +106,6 @@ export default function ReserveGiftForm({
           required
           min={1}
           placeholder="Angi antall"
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="message">Melding (valgfritt)</Label>
-        <Textarea
-          id="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Legg til en personlig melding til paret"
-          rows={3}
         />
       </div>
 

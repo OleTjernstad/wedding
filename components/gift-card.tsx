@@ -30,13 +30,12 @@ interface GiftCardProps {
 }
 
 export default function GiftCard({ gift, onReserved }: GiftCardProps) {
-  const [isPurchased, setIsPurchased] = useState(gift.reserved);
-  const [isPartiallyReserved, setIsPartiallyReserved] = useState(
-    gift.partiallyReserved
-  );
   const [reservedQuantity, setReservedQuantity] = useState(
     gift.reservedQuantity
   );
+  const isPurchased = reservedQuantity >= gift.quantity;
+  const isPartiallyReserved =
+    reservedQuantity > 0 && reservedQuantity < gift.quantity;
   const [isReserveDialogOpen, setIsReserveDialogOpen] = useState(false);
 
   // Generate a consistent color based on the gift category
@@ -56,10 +55,8 @@ export default function GiftCard({ gift, onReserved }: GiftCardProps) {
   };
 
   // Handle successful reservation
-  const handleReservationSuccess = () => {
-    setIsPurchased(true);
-    setIsPartiallyReserved(false);
-    setReservedQuantity(gift.quantity);
+  const handleReservationSuccess = (updatedReservationQuantity: number) => {
+    setReservedQuantity(updatedReservationQuantity);
     setIsReserveDialogOpen(false);
     if (onReserved) onReserved();
   };

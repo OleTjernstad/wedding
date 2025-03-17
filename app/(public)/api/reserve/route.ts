@@ -52,14 +52,14 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.gift.update({
+    const updatedGift = await db.gift.update({
       where: { id: giftId },
       data: {
         reservedQuantity: gift.reservedQuantity + quantity,
       },
     });
 
-    return NextResponse.json(reservation, { status: 201 });
+    return NextResponse.json({ reservation, updatedGift }, { status: 201 });
   } catch (error) {
     console.error("Error creating reservation:", error);
     return NextResponse.json(
