@@ -1,6 +1,4 @@
-import type { Reservation } from "@/lib/types";
 import { db } from "@/lib/db";
-import { v4 as uuidv4 } from "uuid";
 
 // Get all reservations with gift information
 export async function getReservations() {

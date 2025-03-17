@@ -23,17 +23,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Reservation } from "@/lib/types";
+import { Gift, Reservation } from "@prisma/client";
 
 interface ReservationsTableProps {
-  reservations: Reservation[];
+  reservations: (Reservation & {
+    gift: Gift;
+  })[];
 }
 
 export function ReservationsTable({ reservations }: ReservationsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const columns: ColumnDef<Reservation>[] = [
+  const columns: ColumnDef<
+    Reservation & {
+      gift: Gift;
+    }
+  >[] = [
     {
       accessorKey: "gift.name",
       header: "Gave",
@@ -45,10 +51,10 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
       cell: ({ row }) => row.getValue("quantity"),
     },
     {
-      accessorKey: "date",
+      accessorKey: "createdAt",
       header: "Dato",
       cell: ({ row }) => {
-        const date = new Date(row.getValue("date"));
+        const date = new Date(row.getValue("createdAt"));
         return format(date, "PPP");
       },
     },
@@ -71,18 +77,6 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
 
   return (
     <div>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filtrer etter gjestens navn..."
-          value={
-            (table.getColumn("guestName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("guestName")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
