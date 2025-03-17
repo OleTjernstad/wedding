@@ -14,7 +14,6 @@ export default function AdminLayout({
         <div className="container flex h-14 items-center justify-between">
           <MainNav />
           <div className="flex items-center gap-4">
-            <ModeToggle />
             <UserButton />
           </div>
         </div>

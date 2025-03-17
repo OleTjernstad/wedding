@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 
 // Get all gifts with category information
-export async function getGifts(): Promise<GiftWithCategory[]> {
+export async function getGifts() {
   try {
     const gifts = await db.gift.findMany({
       include: {
@@ -12,20 +12,7 @@ export async function getGifts(): Promise<GiftWithCategory[]> {
       },
     });
 
-    return gifts.map((gift) => ({
-      id: gift.id,
-      name: gift.name,
-      description: gift.description || "",
-      quantity: gift.quantity,
-      reservedQuantity: gift.reservedQuantity,
-      categoryId: gift.categoryId,
-      imageUrl: gift.imageUrl || undefined,
-      category: {
-        id: gift.category.id,
-        name: gift.category.name,
-        description: gift.category.description || undefined,
-      },
-    }));
+    return gifts;
   } catch (error) {
     console.error("Error fetching gifts:", error);
     throw new Error("Failed to fetch gifts");
@@ -35,13 +22,16 @@ export async function getGifts(): Promise<GiftWithCategory[]> {
 // Get public gifts (for the public registry)
 export async function getPublicGifts(categoryId?: string, search?: string) {
   try {
-    const where: any = undefined;
-    if (categoryId) where.categoryId = categoryId;
-    if (search) where.name = { contains: search, mode: "insensitive" };
-
-    console.log({ where });
     const gifts = await db.gift.findMany({
-      where,
+      where:
+        search || categoryId
+          ? {
+              ...(categoryId && { categoryId }),
+              ...(search && {
+                name: { contains: search, mode: "insensitive" },
+              }),
+            }
+          : undefined,
       orderBy: {
         name: "asc",
       },
@@ -49,8 +39,6 @@ export async function getPublicGifts(categoryId?: string, search?: string) {
         category: true,
       },
     });
-
-    console.log({ gifts });
 
     return gifts;
   } catch (error) {
@@ -60,7 +48,7 @@ export async function getPublicGifts(categoryId?: string, search?: string) {
 }
 
 // Get a gift by ID
-export async function getGiftById(id: string): Promise<Gift | null> {
+export async function getGiftById(id: string) {
   try {
     const gift = await db.gift.findUnique({
       where: { id },
@@ -70,15 +58,7 @@ export async function getGiftById(id: string): Promise<Gift | null> {
       return null;
     }
 
-    return {
-      id: gift.id,
-      name: gift.name,
-      description: gift.description || "",
-      quantity: gift.quantity,
-      reservedQuantity: gift.reservedQuantity,
-      categoryId: gift.categoryId,
-      imageUrl: gift.imageUrl || undefined,
-    };
+    return gift;
   } catch (error) {
     console.error(`Error fetching gift with ID ${id}:`, error);
     throw new Error("Failed to fetch gift");
@@ -86,7 +66,7 @@ export async function getGiftById(id: string): Promise<Gift | null> {
 }
 
 // Create a new gift
-export async function createGift(giftData: Omit<Gift, "id">): Promise<Gift> {
+export async function createGift(giftData: Omit<Gift, "id">) {
   try {
     const gift = await db.gift.create({
       data: {
@@ -96,19 +76,11 @@ export async function createGift(giftData: Omit<Gift, "id">): Promise<Gift> {
         quantity: giftData.quantity,
         reservedQuantity: giftData.reservedQuantity || 0,
         categoryId: giftData.categoryId,
-        imageUrl: giftData.imageUrl,
+        link: giftData.link,
       },
     });
 
-    return {
-      id: gift.id,
-      name: gift.name,
-      description: gift.description || "",
-      quantity: gift.quantity,
-      reservedQuantity: gift.reservedQuantity,
-      categoryId: gift.categoryId,
-      imageUrl: gift.imageUrl || undefined,
-    };
+    return gift;
   } catch (error) {
     console.error("Error creating gift:", error);
     throw new Error("Failed to create gift");
@@ -116,7 +88,7 @@ export async function createGift(giftData: Omit<Gift, "id">): Promise<Gift> {
 }
 
 // Update an existing gift
-export async function updateGift(giftData: Gift): Promise<Gift> {
+export async function updateGift(giftData: Gift) {
   try {
     const gift = await db.gift.update({
       where: { id: giftData.id },
@@ -126,19 +98,11 @@ export async function updateGift(giftData: Gift): Promise<Gift> {
         quantity: giftData.quantity,
         reservedQuantity: giftData.reservedQuantity,
         categoryId: giftData.categoryId,
-        imageUrl: giftData.imageUrl,
+        link: giftData.link,
       },
     });
 
-    return {
-      id: gift.id,
-      name: gift.name,
-      description: gift.description || "",
-      quantity: gift.quantity,
-      reservedQuantity: gift.reservedQuantity,
-      categoryId: gift.categoryId,
-      imageUrl: gift.imageUrl || undefined,
-    };
+    return gift;
   } catch (error) {
     console.error(`Error updating gift with ID ${giftData.id}:`, error);
     throw new Error("Failed to update gift");
