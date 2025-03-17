@@ -8,7 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, ExternalLink, GiftIcon } from "lucide-react";
+import { Category, Gift } from "@prisma/client";
+import { Check, ExternalLink, GiftIcon, Package, Store } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,40 +20,22 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ReserveGiftForm from "@/components/reserve-gift-form";
-import { Tooltip } from "@/components/ui/tooltip";
 import { useState } from "react";
 
 interface GiftCardProps {
-  gift: {
-    id: string;
-    name: string;
-    description: string;
-    store: string;
-    link: string;
-    category: {
-      id: string;
-      name: string;
-      slug: string;
-    };
-    image?: {
-      url: string;
-    };
-    reserved: boolean;
-    partiallyReserved: boolean;
-    reservedQuantity: number;
-    quantity: number;
+  gift: Gift & {
+    category: Category;
   };
   onReserved?: () => void;
 }
 
 export default function GiftCard({ gift, onReserved }: GiftCardProps) {
-  const [isPurchased, setIsPurchased] = useState(gift.reserved);
-  const [isPartiallyReserved, setIsPartiallyReserved] = useState(
-    gift.partiallyReserved
-  );
   const [reservedQuantity, setReservedQuantity] = useState(
     gift.reservedQuantity
   );
+  const isPurchased = reservedQuantity >= gift.quantity;
+  const isPartiallyReserved =
+    reservedQuantity > 0 && reservedQuantity < gift.quantity;
   const [isReserveDialogOpen, setIsReserveDialogOpen] = useState(false);
 
   // Generate a consistent color based on the gift category
@@ -72,10 +55,8 @@ export default function GiftCard({ gift, onReserved }: GiftCardProps) {
   };
 
   // Handle successful reservation
-  const handleReservationSuccess = () => {
-    setIsPurchased(true);
-    setIsPartiallyReserved(false);
-    setReservedQuantity(gift.quantity);
+  const handleReservationSuccess = (updatedReservationQuantity: number) => {
+    setReservedQuantity(updatedReservationQuantity);
     setIsReserveDialogOpen(false);
     if (onReserved) onReserved();
   };
@@ -96,7 +77,9 @@ export default function GiftCard({ gift, onReserved }: GiftCardProps) {
     }
   };
 
-  const categorySlug = gift.category?.slug || "default";
+  console.log(gift);
+
+  const categorySlug = gift.category?.name || "default";
   const categoryName = gift.category?.name || getCategoryName(categorySlug);
 
   return (
@@ -137,9 +120,16 @@ export default function GiftCard({ gift, onReserved }: GiftCardProps) {
             {categoryName}
           </Badge>
           <p className="text-gray-600">{gift.description}</p>
-          <p className="text-gray-500 text-sm mt-2">
+          <div className="flex items-center text-gray-500 text-sm mt-2">
+            <Package className="h-4 w-4 mr-1" />
             Ønsket antall: {gift.quantity}
-          </p>
+          </div>
+          {gift.store ? (
+            <div className="flex items-center text-gray-500 text-sm mt-2">
+              <Store className="h-4 w-4 mr-1" />
+              {gift.store}
+            </div>
+          ) : null}
         </CardContent>
         <CardFooter className="flex justify-between gap-2 pt-4 border-t">
           <Button

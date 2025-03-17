@@ -6,14 +6,13 @@ import { AlertCircle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "./ui/label";
-import type React from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import { useState } from "react";
 
 interface ReserveGiftFormProps {
   giftId: string;
   giftName: string;
-  onSuccess?: () => void;
+  onSuccess?: (updatedReservationQuantity: number) => void;
 }
 
 export default function ReserveGiftForm({
@@ -33,7 +32,7 @@ export default function ReserveGiftForm({
     setLoading(true);
 
     try {
-      const response = await fetch("/api/registry/reserve", {
+      const response = await fetch("/api/reserve", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,6 +47,8 @@ export default function ReserveGiftForm({
 
       const data = await response.json();
 
+      console.log({ data });
+
       if (!response.ok) {
         throw new Error(data.error || "Kunne ikke reservere gave");
       }
@@ -56,8 +57,13 @@ export default function ReserveGiftForm({
 
       // Call onSuccess callback if provided
       if (onSuccess) {
-        onSuccess();
+        onSuccess(data.updatedGift.reservedQuantity);
       }
+
+      // Display toast message
+      toast(
+        `Takk for at du reserverte "${giftName}". Vi gleder oss til å feire dagen med deg/dere.`
+      );
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -105,17 +111,6 @@ export default function ReserveGiftForm({
           required
           min={1}
           placeholder="Angi antall"
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="message">Melding (valgfritt)</Label>
-        <Textarea
-          id="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Legg til en personlig melding til paret"
-          rows={3}
         />
       </div>
 
