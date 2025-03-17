@@ -1,8 +1,9 @@
-import type { Reservation } from "@/lib/types";
+import { Gift, Reservation } from "@prisma/client";
+
 import { formatDistanceToNow } from "date-fns";
 
 interface RecentReservationsProps {
-  reservations: Reservation[];
+  reservations: (Reservation & { gift: Gift })[];
 }
 
 export function RecentReservations({ reservations }: RecentReservationsProps) {
@@ -21,17 +22,9 @@ export function RecentReservations({ reservations }: RecentReservationsProps) {
       {reservations.map((reservation) => (
         <div key={reservation.id} className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {reservation.guestName}
-            </p>
             <p className="text-sm text-muted-foreground">
               {reservation.gift?.name} (x{reservation.quantity})
             </p>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {formatDistanceToNow(new Date(reservation.date), {
-              addSuffix: true,
-            })}
           </div>
         </div>
       ))}
