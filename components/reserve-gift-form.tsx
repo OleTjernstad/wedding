@@ -2,20 +2,12 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle } from "lucide-react";
-import {
-  Toast,
-  ToastDescription,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-} from "@/components/ui/toast";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "./ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import { useState } from "react";
-import { useToast } from "./ui/use-toast";
 
 interface ReserveGiftFormProps {
   giftId: string;
@@ -38,8 +30,6 @@ export default function ReserveGiftForm({
     e.preventDefault();
     setError(null);
     setLoading(true);
-
-    const { toast } = useToast();
 
     try {
       const response = await fetch("/api/reserve", {
@@ -71,10 +61,9 @@ export default function ReserveGiftForm({
       }
 
       // Display toast message
-      toast({
-        title: "Gave reservert!",
-        description: `Takk for at du reserverte "${giftName}". Vi gleder oss til å feire dagen med deg/dere.`,
-      });
+      toast(
+        `Takk for at du reserverte "${giftName}". Vi gleder oss til å feire dagen med deg/dere.`
+      );
     } catch (err: any) {
       setError(err.message);
     } finally {

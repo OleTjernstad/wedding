@@ -25,13 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider afterSignOutUrl={"/"}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </html>
+      <div
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </div>
     </ClerkProvider>
   );
 }
