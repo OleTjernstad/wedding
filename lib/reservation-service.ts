@@ -1,9 +1,9 @@
-import { db } from "@/lib/db"
-import type { Reservation } from "@/lib/types"
-import { v4 as uuidv4 } from "uuid"
+import type { Reservation } from "@/lib/types";
+import { db } from "@/lib/db";
+import { v4 as uuidv4 } from "uuid";
 
 // Get all reservations with gift information
-export async function getReservations(): Promise<Reservation[]> {
+export async function getReservations() {
   try {
     const reservations = await db.reservation.findMany({
       include: {
@@ -12,35 +12,17 @@ export async function getReservations(): Promise<Reservation[]> {
       orderBy: {
         date: "desc",
       },
-    })
+    });
 
-    return reservations.map((reservation) => ({
-      id: reservation.id,
-      giftId: reservation.giftId,
-      quantity: reservation.quantity,
-      guestName: reservation.guestName,
-      guestEmail: reservation.guestEmail,
-      date: reservation.date,
-      gift: reservation.gift
-        ? {
-            id: reservation.gift.id,
-            name: reservation.gift.name,
-            description: reservation.gift.description || "",
-            quantity: reservation.gift.quantity,
-            reservedQuantity: reservation.gift.reservedQuantity,
-            categoryId: reservation.gift.categoryId,
-            imageUrl: reservation.gift.imageUrl || undefined,
-          }
-        : undefined,
-    }))
+    return reservations;
   } catch (error) {
-    console.error("Error fetching reservations:", error)
-    throw new Error("Failed to fetch reservations")
+    console.error("Error fetching reservations:", error);
+    throw new Error("Failed to fetch reservations");
   }
 }
 
 // Get recent reservations
-export async function getRecentReservations(limit: number): Promise<Reservation[]> {
+export async function getRecentReservations(limit: number) {
   try {
     const reservations = await db.reservation.findMany({
       include: {
@@ -50,35 +32,19 @@ export async function getRecentReservations(limit: number): Promise<Reservation[
         date: "desc",
       },
       take: limit,
-    })
+    });
 
-    return reservations.map((reservation) => ({
-      id: reservation.id,
-      giftId: reservation.giftId,
-      quantity: reservation.quantity,
-      guestName: reservation.guestName,
-      guestEmail: reservation.guestEmail,
-      date: reservation.date,
-      gift: reservation.gift
-        ? {
-            id: reservation.gift.id,
-            name: reservation.gift.name,
-            description: reservation.gift.description || "",
-            quantity: reservation.gift.quantity,
-            reservedQuantity: reservation.gift.reservedQuantity,
-            categoryId: reservation.gift.categoryId,
-            imageUrl: reservation.gift.imageUrl || undefined,
-          }
-        : undefined,
-    }))
+    return reservations;
   } catch (error) {
-    console.error("Error fetching recent reservations:", error)
-    throw new Error("Failed to fetch recent reservations")
+    console.error("Error fetching recent reservations:", error);
+    throw new Error("Failed to fetch recent reservations");
   }
 }
 
 // Create a new reservation
-export async function createReservation(reservationData: Omit<Reservation, "id">): Promise<Reservation> {
+export async function createReservation(
+  reservationData: Omit<Reservation, "id">
+) {
   try {
     const reservation = await db.reservation.create({
       data: {
@@ -89,19 +55,11 @@ export async function createReservation(reservationData: Omit<Reservation, "id">
         guestEmail: reservationData.guestEmail,
         date: reservationData.date,
       },
-    })
+    });
 
-    return {
-      id: reservation.id,
-      giftId: reservation.giftId,
-      quantity: reservation.quantity,
-      guestName: reservation.guestName,
-      guestEmail: reservation.guestEmail,
-      date: reservation.date,
-    }
+    return reservation;
   } catch (error) {
-    console.error("Error creating reservation:", error)
-    throw new Error("Failed to create reservation")
+    console.error("Error creating reservation:", error);
+    throw new Error("Failed to create reservation");
   }
 }
-
