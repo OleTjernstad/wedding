@@ -32,7 +32,7 @@ export default function ReserveGiftForm({
     setLoading(true);
 
     try {
-      const response = await fetch("/api/registry/reserve", {
+      const response = await fetch("/api/reserve", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

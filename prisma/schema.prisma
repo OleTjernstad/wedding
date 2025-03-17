@@ -33,15 +33,13 @@ model Category {
 }
 
 model Reservation {
-  id         String   @id
-  giftId     String
-  gift       Gift     @relation(fields: [giftId], references: [id])
-  quantity   Int
-  guestName  String
-  guestEmail String
-  date       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id
+  giftId    String
+  gift      Gift     @relation(fields: [giftId], references: [id])
+  quantity  Int
+  message   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([giftId])
 }

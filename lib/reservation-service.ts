@@ -10,7 +10,7 @@ export async function getReservations() {
         gift: true,
       },
       orderBy: {
-        date: "desc",
+        createdAt: "desc",
       },
     });
 
@@ -29,7 +29,7 @@ export async function getRecentReservations(limit: number) {
         gift: true,
       },
       orderBy: {
-        date: "desc",
+        createdAt: "desc",
       },
       take: limit,
     });
@@ -38,28 +38,5 @@ export async function getRecentReservations(limit: number) {
   } catch (error) {
     console.error("Error fetching recent reservations:", error);
     throw new Error("Failed to fetch recent reservations");
-  }
-}
-
-// Create a new reservation
-export async function createReservation(
-  reservationData: Omit<Reservation, "id">
-) {
-  try {
-    const reservation = await db.reservation.create({
-      data: {
-        id: uuidv4(),
-        giftId: reservationData.giftId,
-        quantity: reservationData.quantity,
-        guestName: reservationData.guestName,
-        guestEmail: reservationData.guestEmail,
-        date: reservationData.date,
-      },
-    });
-
-    return reservation;
-  } catch (error) {
-    console.error("Error creating reservation:", error);
-    throw new Error("Failed to create reservation");
   }
 }
