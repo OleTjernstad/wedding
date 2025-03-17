@@ -43,11 +43,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import type { GiftWithCategory } from "@/lib/types";
-import type { Category } from "@/lib/types";
+
 import { toast } from "@/components/ui/use-toast";
+import { Category, Gift } from "@prisma/client";
 
 interface GiftsTableProps {
-  gifts: GiftWithCategory[];
+  gifts: (Gift & { category: Category })[];
   categories: Category[];
 }
 

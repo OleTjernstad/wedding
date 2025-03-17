@@ -7,7 +7,7 @@ import {
   deleteCategory,
   getCategories,
 } from "@/lib/category-service";
-import type { Category } from "@/lib/types";
+import { Category } from "@prisma/client";
 
 // GET all categories
 export async function GET() {

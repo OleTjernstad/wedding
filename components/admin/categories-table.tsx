@@ -41,8 +41,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { Category } from "@/lib/types";
+
 import { toast } from "@/components/ui/use-toast";
+import { Category } from "@prisma/client";
 
 interface CategoriesTableProps {
   categories: Category[];

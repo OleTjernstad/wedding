@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Category } from "@/lib/types";
+import { Category } from "@prisma/client";
 import CategoryTabs from "@/components/category-tabs";
 import QRCode from "@/components/qr-code";
 import SearchBar from "@/components/search-bar";

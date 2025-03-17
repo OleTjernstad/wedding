@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 
-import { Category } from "@/lib/types";
+import { Category } from "@prisma/client";
 import GiftList from "@/components/gift-list";
 import { Skeleton } from "@/components/ui/skeleton";
 

@@ -2,7 +2,6 @@
 
 import * as z from "zod";
 
-import type { Category, Gift } from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -21,6 +20,8 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
+import { Category } from "@prisma/client";
+import type { Gift } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
