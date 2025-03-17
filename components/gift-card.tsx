@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Category, Gift } from "@prisma/client";
-import { Check, ExternalLink, GiftIcon } from "lucide-react";
+import { Check, ExternalLink, GiftIcon, Package, Store } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -120,9 +120,16 @@ export default function GiftCard({ gift, onReserved }: GiftCardProps) {
             {categoryName}
           </Badge>
           <p className="text-gray-600">{gift.description}</p>
-          <p className="text-gray-500 text-sm mt-2">
+          <div className="flex items-center text-gray-500 text-sm mt-2">
+            <Package className="h-4 w-4 mr-1" />
             Ønsket antall: {gift.quantity}
-          </p>
+          </div>
+          {gift.store ? (
+            <div className="flex items-center text-gray-500 text-sm mt-2">
+              <Store className="h-4 w-4 mr-1" />
+              {gift.store}
+            </div>
+          ) : null}
         </CardContent>
         <CardFooter className="flex justify-between gap-2 pt-4 border-t">
           <Button
