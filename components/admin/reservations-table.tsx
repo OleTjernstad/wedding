@@ -35,18 +35,6 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
 
   const columns: ColumnDef<Reservation>[] = [
     {
-      accessorKey: "guestName",
-      header: "Gjestens navn",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("guestName")}</div>
-      ),
-    },
-    {
-      accessorKey: "guestEmail",
-      header: "E-post",
-      cell: ({ row }) => row.getValue("guestEmail"),
-    },
-    {
       accessorKey: "gift.name",
       header: "Gave",
       cell: ({ row }) => row.original.gift?.name || "Ukjent gave",

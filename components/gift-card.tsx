@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Category, Gift } from "@prisma/client";
 import { Check, ExternalLink, GiftIcon } from "lucide-react";
 import {
   Dialog,
@@ -19,28 +20,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ReserveGiftForm from "@/components/reserve-gift-form";
-import { Tooltip } from "@/components/ui/tooltip";
 import { useState } from "react";
 
 interface GiftCardProps {
-  gift: {
-    id: string;
-    name: string;
-    description: string;
-    store: string;
-    link: string;
-    category: {
-      id: string;
-      name: string;
-      slug: string;
-    };
-    image?: {
-      url: string;
-    };
-    reserved: boolean;
-    partiallyReserved: boolean;
-    reservedQuantity: number;
-    quantity: number;
+  gift: Gift & {
+    category: Category;
   };
   onReserved?: () => void;
 }
@@ -96,7 +80,7 @@ export default function GiftCard({ gift, onReserved }: GiftCardProps) {
     }
   };
 
-  console.log(gift.category);
+  console.log(gift);
 
   const categorySlug = gift.category?.name || "default";
   const categoryName = gift.category?.name || getCategoryName(categorySlug);

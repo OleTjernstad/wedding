@@ -6,7 +6,7 @@ import {
   deleteGift,
   getGifts,
 } from "@/lib/gift-service";
-import type { Gift } from "@/lib/types";
+import { Gift } from "@prisma/client";
 
 // GET all gifts (admin only)
 export async function GET(req: NextRequest) {

@@ -74,29 +74,19 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
         const category = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Åpne meny</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link href={`/admin/categories/${category.id}`}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Rediger
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-red-600"
-                onClick={() => setDeleteCategoryId(category.id)}
-              >
-                <Trash className="mr-2 h-4 w-4" />
-                Slett
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <Button asChild variant={"outline"}>
+              <Link href={`/admin/categories/${category.id}`}>
+                <Edit className="mr-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              variant={"destructive"}
+              onClick={() => setDeleteCategoryId(category.id)}
+            >
+              <Trash className="mr-2 h-4 w-4" />
+            </Button>
+          </>
         );
       },
     },

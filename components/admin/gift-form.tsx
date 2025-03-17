@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 
+import { Category, Gift } from "@prisma/client";
 import {
   Form,
   FormControl,
@@ -20,8 +21,6 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { Category } from "@prisma/client";
-import type { Gift } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
@@ -36,6 +35,7 @@ const giftFormSchema = z.object({
   quantity: z.coerce.number().min(1, "Antall må være minst 1"),
   categoryId: z.string().min(1, "Kategori er påkrevd"),
   link: z.string().url("Må være en gyldig URL"),
+  store: z.string().optional(),
 });
 
 type GiftFormValues = z.infer<typeof giftFormSchema>;
@@ -55,6 +55,7 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
     quantity: gift?.quantity || 1,
     categoryId: gift?.categoryId || "",
     link: gift?.link || "",
+    store: gift?.store || "",
   };
 
   const form = useForm<GiftFormValues>({
@@ -219,6 +220,21 @@ export function GiftForm({ gift, categories }: GiftFormProps) {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="store"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Butikk</FormLabel>
+              <FormControl>
+                <Input placeholder="Skriv inn butikkens navn" {...field} />
+              </FormControl>
+              <FormDescription>Butikken hvor gaven kan kjøpes.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

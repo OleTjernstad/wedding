@@ -1,5 +1,6 @@
-import type { Gift, GiftStats, GiftWithCategory } from "@/lib/types";
+import type { GiftStats, GiftWithCategory } from "@/lib/types";
 
+import { Gift } from "@prisma/client";
 import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 
@@ -99,6 +100,7 @@ export async function updateGift(giftData: Gift) {
         reservedQuantity: giftData.reservedQuantity,
         categoryId: giftData.categoryId,
         link: giftData.link,
+        store: giftData.store,
       },
     });
 

@@ -14,6 +14,7 @@ model Gift {
   quantity         Int
   reservedQuantity Int           @default(0)
   link             String        @default("")
+  store            String        @default("")
   categoryId       String
   category         Category      @relation(fields: [categoryId], references: [id])
   reservations     Reservation[]
