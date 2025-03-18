@@ -43,7 +43,7 @@ export function View({ categories }: ViewProps) {
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <div className="bg-white p-4 rounded-lg shadow-md">
-              <QRCode url="https://miriam-ole-wedding.vercel.app" />
+              <QRCode url={process.env.NEXT_PUBLIC_SERVER_URL ?? ""} />
               <p className="mt-2 text-sm text-gray-500">
                 Skann for å se bryllupslisten
               </p>
