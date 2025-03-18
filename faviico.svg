@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="faviico.svg"
+   inkscape:export-filename="faviico.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.1893044"
+     inkscape:cx="206.42318"
+     inkscape:cy="0"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Lag 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       style="fill:#450ba5;stroke-width:0.829;-inkscape-stroke:none;paint-order:fill markers stroke;stop-color:#000000"
+       id="path508"
+       ry="48.498238"
+       rx="50.277988"
+       cy="50.722927"
+       cx="50.945393" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:171.924px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#c8a9fa;stroke-width:0.828998;-inkscape-stroke:none;paint-order:fill markers stroke;stop-color:#000000"
+       x="-0.62236834"
+       y="67.094925"
+       id="text236"
+       transform="scale(0.926434,1.0794077)"><tspan
+         sodipodi:role="line"
+         id="tspan234"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Gabriola;-inkscape-font-specification:'Gabriola Bold';stroke-width:0.828998;fill:#c8a9fa"
+         x="-0.62236834"
+         y="67.094925">m</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:58.7042px;font-family:'Freestyle Script';-inkscape-font-specification:'Freestyle Script Bold';fill:#975cf6;stroke-width:0.829;-inkscape-stroke:none;paint-order:fill markers stroke;stop-color:#000000"
+       x="14.460737"
+       y="87.459061"
+       id="text290"
+       transform="scale(0.98303757,1.0172551)"><tspan
+         sodipodi:role="line"
+         id="tspan288"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Gabriola;-inkscape-font-specification:'Gabriola Bold';stroke-width:0.829;fill:#975cf6"
+         x="14.460737"
+         y="87.459061">O</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:49.6005px;font-family:Gabriola;-inkscape-font-specification:'Gabriola Bold';fill:#975cf6;stroke-width:0.828998;-inkscape-stroke:none;paint-order:fill markers stroke;stop-color:#000000"
+       x="52.651295"
+       y="89.481575"
+       id="text402"
+       transform="scale(1.0233316,0.97720037)"><tspan
+         sodipodi:role="line"
+         id="tspan400"
+         style="stroke-width:0.828998;fill:#975cf6"
+         x="52.651295"
+         y="89.481575">T</tspan></text>
+    <ellipse
+       style="fill:#450ba5;stroke-width:0.829;-inkscape-stroke:none;paint-order:fill markers stroke;stop-color:#000000"
+       id="path614"
+       cx="1.4460484"
+       cy="52.057739"
+       rx="3.4482691"
+       ry="0.22246897" />
+  </g>
+</svg>
