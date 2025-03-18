@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getCategoryById } from "@/lib/category-service";
 import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
 
 // GET a specific category by ID (public)
 export async function GET(
@@ -45,8 +46,21 @@ export async function DELETE(
       );
     }
 
-    // In a real application, you would delete the category from your database
-    // await deleteCategory(params.id)
+    const gifts = await db.gift.findMany({
+      where: { categoryId: params.id },
+    });
+
+    if (gifts.length > 0) {
+      return NextResponse.json(
+        { error: "Flytt gaver til en annen kategori før sletting" },
+        { status: 400 }
+      );
+    }
+
+    await db.category.delete({
+      where: { id: params.id },
+    });
+
     revalidatePath("/admin/categories");
     revalidatePath("/");
 

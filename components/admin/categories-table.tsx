@@ -42,8 +42,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { toast } from "@/components/ui/use-toast";
 import { Category } from "@prisma/client";
+import { toast } from "sonner";
 
 interface CategoriesTableProps {
   categories: Category[];
@@ -54,6 +54,28 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(null);
+
+  const handleDeleteCategory = async (categoryId: string) => {
+    try {
+      const response = await fetch(`/api/categories/${categoryId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete category");
+      }
+
+      toast("Kategorien har blitt slettet.");
+
+      router.refresh();
+    } catch (error: any) {
+      console.error("Error deleting category:", error);
+      toast(
+        error.response.message || "Kunne ikke slette kategori. Prøv igjen."
+      );
+    }
+  };
 
   const columns: ColumnDef<Category>[] = [
     {
@@ -82,7 +104,7 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
             </Button>
             <Button
               variant={"destructive"}
-              onClick={() => setDeleteCategoryId(category.id)}
+              onClick={() => handleDeleteCategory(category.id)}
             >
               <Trash className="mr-2 h-4 w-4" />
             </Button>
@@ -106,36 +128,6 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
       columnFilters,
     },
   });
-
-  const handleDeleteCategory = async () => {
-    if (!deleteCategoryId) return;
-
-    try {
-      const response = await fetch(`/api/categories?id=${deleteCategoryId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete category");
-      }
-
-      toast({
-        title: "Category deleted",
-        description: "The category has been deleted successfully.",
-      });
-
-      router.refresh();
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete category. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setDeleteCategoryId(null);
-    }
-  };
 
   return (
     <div>
@@ -237,7 +229,7 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
           <AlertDialogFooter>
             <AlertDialogCancel>Avbryt</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteCategory}
+              onClick={() => handleDeleteCategory(deleteCategoryId!)}
               className="bg-red-600 hover:bg-red-700"
             >
               Slett

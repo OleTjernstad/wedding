@@ -44,8 +44,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { GiftWithCategory } from "@/lib/types";
 
-import { toast } from "@/components/ui/use-toast";
 import { Category, Gift } from "@prisma/client";
+import { toast } from "sonner";
 
 interface GiftsTableProps {
   gifts: (Gift & { category: Category })[];
@@ -57,6 +57,25 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [deleteGiftId, setDeleteGiftId] = useState<string | null>(null);
+
+  const handleDeleteGift = async (giftId: string) => {
+    try {
+      const response = await fetch(`/api/gifts/${giftId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete gift");
+      }
+
+      toast("The gift has been deleted successfully.");
+
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting gift:", error);
+      toast("Failed to delete gift. Please try again.");
+    }
+  };
 
   const columns: ColumnDef<
     Omit<GiftWithCategory, "category"> & {
@@ -135,7 +154,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
             </Button>
             <Button
               variant={"destructive"}
-              onClick={() => setDeleteGiftId(gift.id)}
+              onClick={() => handleDeleteGift(gift.id)}
             >
               <Trash className="mr-2 h-4 w-4" />
             </Button>
@@ -162,36 +181,6 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
       columnFilters,
     },
   });
-
-  const handleDeleteGift = async () => {
-    if (!deleteGiftId) return;
-
-    try {
-      const response = await fetch(`/api/gifts?id=${deleteGiftId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete gift");
-      }
-
-      toast({
-        title: "Gift deleted",
-        description: "The gift has been deleted successfully.",
-      });
-
-      router.refresh();
-    } catch (error) {
-      console.error("Error deleting gift:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete gift. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setDeleteGiftId(null);
-    }
-  };
 
   return (
     <div>
@@ -293,7 +282,7 @@ export function GiftsTable({ gifts, categories }: GiftsTableProps) {
           <AlertDialogFooter>
             <AlertDialogCancel>Avbryt</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteGift}
+              onClick={() => handleDeleteGift(deleteGiftId!)}
               className="bg-red-600 hover:bg-red-700"
             >
               Slett

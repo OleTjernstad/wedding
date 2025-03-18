@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getGiftById } from "@/lib/gift-service";
 import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
 
 // GET a specific gift by ID (public)
 export async function GET(
@@ -39,8 +40,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Gift not found" }, { status: 404 });
     }
 
-    // In a real application, you would delete the gift from your database
-    // await deleteGift(params.id)
+    // Delete the gift and related reservations from the database
+    await db.reservation.deleteMany({
+      where: { giftId: params.id },
+    });
+    await db.gift.delete({
+      where: { id: params.id },
+    });
 
     revalidatePath("/admin/gifts");
     revalidatePath("/");
