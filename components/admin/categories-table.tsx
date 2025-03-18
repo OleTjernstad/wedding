@@ -71,9 +71,7 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
       router.refresh();
     } catch (error: any) {
       console.error("Error deleting category:", error);
-      toast(
-        error.response.message || "Kunne ikke slette kategori. Prøv igjen."
-      );
+      toast(error.message || "Kunne ikke slette kategori. Prøv igjen.");
     }
   };
 
