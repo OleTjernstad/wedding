@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getCategoryById } from "@/lib/category-service";
+import { revalidatePath } from "next/cache";
 
 // GET a specific category by ID (public)
 export async function GET(
@@ -46,6 +47,8 @@ export async function DELETE(
 
     // In a real application, you would delete the category from your database
     // await deleteCategory(params.id)
+    revalidatePath("/admin/categories");
+    revalidatePath("/");
 
     return NextResponse.json({ success: true });
   } catch (error) {

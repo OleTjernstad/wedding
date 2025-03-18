@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import { revalidatePath } from "next/cache";
 
 // POST create a new reservation (public)
 export async function POST(req: NextRequest) {
@@ -58,6 +59,10 @@ export async function POST(req: NextRequest) {
         reservedQuantity: gift.reservedQuantity + quantity,
       },
     });
+
+    revalidatePath("/admin/gifts");
+    revalidatePath("/admin/reservations");
+    revalidatePath("/");
 
     return NextResponse.json({ reservation, updatedGift }, { status: 201 });
   } catch (error) {

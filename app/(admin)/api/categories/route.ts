@@ -8,6 +8,7 @@ import {
   getCategories,
 } from "@/lib/category-service";
 import { Category } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 // GET all categories
 export async function GET() {
@@ -39,6 +40,8 @@ export async function POST(req: NextRequest) {
     }
 
     const category = await createCategory(categoryData);
+    revalidatePath("/admin/categories");
+    revalidatePath("/");
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
     console.error("Error creating category:", error);
@@ -65,6 +68,8 @@ export async function PUT(req: NextRequest) {
     }
 
     const category = await updateCategory(categoryData);
+    revalidatePath("/admin/categories");
+    revalidatePath("/");
     return NextResponse.json(category);
   } catch (error) {
     console.error("Error updating category:", error);

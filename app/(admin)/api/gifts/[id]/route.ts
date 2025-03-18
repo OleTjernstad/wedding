@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getGiftById } from "@/lib/gift-service";
+import { revalidatePath } from "next/cache";
 
 // GET a specific gift by ID (public)
 export async function GET(
@@ -40,6 +41,9 @@ export async function DELETE(
 
     // In a real application, you would delete the gift from your database
     // await deleteGift(params.id)
+
+    revalidatePath("/admin/gifts");
+    revalidatePath("/");
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -7,6 +7,7 @@ import {
   getGifts,
 } from "@/lib/gift-service";
 import { Gift } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 // GET all gifts (admin only)
 export async function GET(req: NextRequest) {
@@ -52,6 +53,10 @@ export async function POST(req: NextRequest) {
     }
 
     const gift = await createGift(giftData);
+
+    revalidatePath("/admin/gifts");
+    revalidatePath("/");
+
     return NextResponse.json(gift, { status: 201 });
   } catch (error) {
     console.error("Error creating gift:", error);
@@ -91,6 +96,10 @@ export async function PUT(req: NextRequest) {
     }
 
     const gift = await updateGift(giftData);
+
+    revalidatePath("/admin/gifts");
+    revalidatePath("/");
+
     return NextResponse.json(gift);
   } catch (error) {
     console.error("Error updating gift:", error);
