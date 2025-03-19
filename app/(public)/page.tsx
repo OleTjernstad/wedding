@@ -8,7 +8,7 @@ export default async function WeddingRegistry() {
       <View categories={categories} />
       {/* Footer */}
       <footer className="bg-purple-900 text-white py-8 px-4 text-center mt-16">
-        <p>Miriam & Ole Tosten Bryllupsliste</p>
+        <p>Miriam & Ole Tosten ønskeliste</p>
         <p className="text-purple-200 text-sm mt-2">21. juni 2025</p>
         <div className="mt-4">
           <a

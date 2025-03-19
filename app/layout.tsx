@@ -5,8 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
-  title: "Miriam & Ole Tosten - Bryllupsliste",
-  description: "Bryllupsliste for Miriam & Ole Tosten",
+  title: "Miriam & Ole Tosten - Ønskeliste",
+  description: "Ønskeliste for Miriam & Ole Tosten",
   generator: "v0.dev",
 };
 

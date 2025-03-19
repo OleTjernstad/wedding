@@ -23,7 +23,7 @@ export function View({ categories }: ViewProps) {
         <h1 className="text-4xl font-bold text-purple-800 mb-2 font-handwriting">
           Miriam & Ole Tosten
         </h1>
-        <p className="text-xl text-purple-600 mb-6">Bryllupsliste</p>
+        <p className="text-xl text-purple-600 mb-6">Ønskeliste</p>
         <p className="text-gray-600 mb-8">21. juni 2025</p>
         <SearchBar onSearch={handleSearch} />
       </div>
@@ -35,17 +35,17 @@ export function View({ categories }: ViewProps) {
         {/* Share Section */}
         <div className="mt-16 bg-purple-50 rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold text-purple-800 mb-4">
-            Del denne bryllupslisten
+            Del denne ønskelisten
           </h2>
           <p className="text-gray-600 mb-6">
-            Del denne bryllupslisten med venner og familie
+            Del denne Ønskelisten med venner og familie
           </p>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <div className="bg-white p-4 rounded-lg shadow-md">
               <QRCode url={process.env.NEXT_PUBLIC_SERVER_URL ?? ""} />
               <p className="mt-2 text-sm text-gray-500">
-                Skann for å se bryllupslisten
+                Skann for å se ønskelisten
               </p>
             </div>
 
@@ -63,7 +63,7 @@ export function View({ categories }: ViewProps) {
                 variant="outline"
                 className="border-purple-200 text-purple-700 hover:bg-purple-50"
                 onClick={() => {
-                  window.location.href = `mailto:?subject=Bryllupsliste for Miriam og Ole&body=Se bryllupslisten her: ${window.location.href}`;
+                  window.location.href = `mailto:?subject=Ønskeliste for Miriam og Ole&body=Se Ønskelisten her: ${window.location.href}`;
                 }}
               >
                 Del via e-post
