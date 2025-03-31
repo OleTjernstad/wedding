@@ -34,7 +34,7 @@ const giftFormSchema = z.object({
   description: z.string().optional(),
   quantity: z.coerce.number().min(1, "Antall må være minst 1"),
   categoryId: z.string().min(1, "Kategori er påkrevd"),
-  link: z.string().url("Må være en gyldig URL"),
+  link: z.string().url("Må være en gyldig URL").optional(),
   store: z.string().optional(),
 });
 

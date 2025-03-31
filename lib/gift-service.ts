@@ -77,7 +77,7 @@ export async function createGift(giftData: Omit<Gift, "id">) {
         quantity: giftData.quantity,
         reservedQuantity: giftData.reservedQuantity || 0,
         categoryId: giftData.categoryId,
-        link: giftData.link,
+        link: giftData.link ?? "",
       },
     });
 
@@ -99,7 +99,7 @@ export async function updateGift(giftData: Gift) {
         quantity: giftData.quantity,
         reservedQuantity: giftData.reservedQuantity,
         categoryId: giftData.categoryId,
-        link: giftData.link,
+        link: giftData.link ?? "",
         store: giftData.store,
       },
     });
