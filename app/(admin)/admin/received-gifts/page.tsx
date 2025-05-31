@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 import { ReceivedGiftForm } from "@/components/admin/received-gift-form";
 import { db } from "@/lib/db";
+import { getReceivedGifts } from "./get-received-gifts";
 
 export const metadata: Metadata = {
   title: "Mottatte gaver",
@@ -14,6 +15,9 @@ export default async function ReceivedGiftsPage() {
       number: "desc",
     },
   });
+
+  const gifts = await getReceivedGifts();
+
   return (
     <div className="flex flex-row gap-8 w-full">
       {/* Left: Form */}
@@ -27,7 +31,7 @@ export default async function ReceivedGiftsPage() {
       <div className="flex-1">
         <div className="border rounded-lg p-6 bg-white dark:bg-zinc-900 shadow">
           <h2 className="text-xl font-semibold mb-4">Latest Registrations</h2>
-          <LatestReceivedGiftsList />
+          <LatestReceivedGiftsList gifts={gifts} />
         </div>
       </div>
     </div>

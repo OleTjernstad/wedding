@@ -3,6 +3,7 @@
 import { ReceivedGiftFormValues } from "@/components/admin/received-gift-form";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { revalidateTag } from "next/cache";
 
 export async function saveReceivedGift(formData: ReceivedGiftFormValues) {
   await auth.protect();
@@ -29,6 +30,9 @@ export async function saveReceivedGift(formData: ReceivedGiftFormValues) {
         comment: formData.comment || null,
       },
     });
+
+    revalidateTag("received-gifts");
+
     return { success: true, receivedGift: created };
   } catch (err: any) {
     console.log(err);
