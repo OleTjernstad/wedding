@@ -14,30 +14,49 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ReceivedGift } from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
+import { saveReceivedGift } from "@/app/(admin)/admin/received-gifts/action";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const receivedGiftFormSchema = z.object({
+export const receivedGiftFormSchema = z.object({
   number: z.coerce.number().min(1, "Nummer er påkrevd og må være unik"),
   givenBy: z.string().min(1, "Gitt av er påkrevd"),
   comment: z.string().optional(),
 });
 
-type ReceivedGiftFormValues = z.infer<typeof receivedGiftFormSchema>;
+export type ReceivedGiftFormValues = z.infer<typeof receivedGiftFormSchema>;
 
-export function ReceivedGiftForm() {
+interface ReceivedGiftFormProps {
+  latest: number;
+}
+export function ReceivedGiftForm({ latest }: ReceivedGiftFormProps) {
   const form = useForm<ReceivedGiftFormValues>({
     resolver: zodResolver(receivedGiftFormSchema),
     defaultValues: {
-      number: undefined,
+      number: latest + 1,
       givenBy: "",
       comment: "",
     },
   });
 
-  function onSubmit(data: ReceivedGiftFormValues) {
-    // Server action will be added later
+  async function onSubmit(data: ReceivedGiftFormValues) {
+    const response = await saveReceivedGift(data);
+
+    if (response?.success) {
+      toast.success("Gave registrert!");
+      form.reset();
+      form.setValue("number", response.receivedGift.number + 1);
+    } else if (response?.error === "number-exists") {
+      toast.error("Nummeret er allerede registrert.");
+      form.setError("number", { message: "Nummeret er allerede registrert." });
+    } else if (response?.error === "data-missing") {
+      toast.error("Alle påkrevde felter må fylles ut.");
+    } else {
+      toast.error("Kunne ikke lagre gave. Prøv igjen.");
+    }
   }
 
   return (
