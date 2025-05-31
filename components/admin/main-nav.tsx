@@ -59,6 +59,17 @@ export function MainNav() {
           Reservasjoner
         </Link>
         <Link
+          href="/admin/received-gifts"
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            pathname === "/admin/received-gifts"
+              ? "text-primary"
+              : "text-muted-foreground"
+          )}
+        >
+          Mottatte gaver
+        </Link>
+        <Link
           href="/admin/settings"
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
