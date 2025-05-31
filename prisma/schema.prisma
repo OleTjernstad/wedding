@@ -44,3 +44,12 @@ model Reservation {
 
   @@index([giftId])
 }
+
+model ReceivedGift {
+  id      String  @id @default(cuid())
+  number  Int     @unique
+  givenBy String  @db.Text
+  comment String? @db.Text
+
+  @@map("received-gifts")
+}
