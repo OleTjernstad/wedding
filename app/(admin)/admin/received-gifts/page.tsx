@@ -1,7 +1,12 @@
 import { LatestReceivedGiftsList } from "@/components/admin/latest-received-gifts-list";
+import { Metadata } from "next";
 import React from "react";
 import { ReceivedGiftForm } from "@/components/admin/received-gift-form";
 
+export const metadata: Metadata = {
+  title: "Mottatte gaver",
+  description: "Se og administrer mottatte gaver",
+};
 export default function ReceivedGiftsPage() {
   return (
     <div className="flex flex-row gap-8 w-full">
