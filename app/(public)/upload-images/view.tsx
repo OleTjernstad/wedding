@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/admin/dropzone";
 import { ImagePreview } from "./image-preview";
 import { Textarea } from "@/components/ui/textarea";
+import { paths } from "@/lib/s3/paths";
 import { preSignedUrlAction } from "./pre-sign-url";
 import { uploadToS3 } from "@/lib/s3/file-upload-helpers";
 import { useState } from "react";
@@ -13,6 +14,8 @@ interface UploadStatus {
   uploaded: boolean;
   error?: string;
 }
+
+const path = paths.uploads;
 
 export default function UploadImagesView() {
   const [images, setImages] = useState<File[]>([]);
@@ -39,15 +42,17 @@ export default function UploadImagesView() {
     let idx = 0;
     for (const imageFile of images) {
       try {
-        const path = `uploads/${Date.now()}-${imageFile.name}`;
         const filesInfo = {
           path,
           originalFileName: imageFile.name,
           fileSize: imageFile.size,
         };
         const { presignedUrl } = await preSignedUrlAction(filesInfo);
+
         const res = await uploadToS3(presignedUrl, imageFile);
+
         if (res.status !== 200) throw new Error("Failed to upload image");
+
         setStatus((prev) => ({
           ...prev,
           [idx]: { uploading: false, uploaded: true },
