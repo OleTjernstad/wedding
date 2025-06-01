@@ -4,11 +4,20 @@ import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/admin/dropzone";
 import { ImagePreview } from "./image-preview";
 import { Textarea } from "@/components/ui/textarea";
+import { preSignedUrlAction } from "./pre-sign-url";
+import { uploadToS3 } from "@/lib/s3/file-upload-helpers";
 import { useState } from "react";
+
+interface UploadStatus {
+  uploading: boolean;
+  uploaded: boolean;
+  error?: string;
+}
 
 export default function UploadImagesView() {
   const [images, setImages] = useState<File[]>([]);
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<Record<number, UploadStatus>>({});
 
   function handleDrop(files: File[]) {
     setImages((prev) => {
@@ -20,10 +29,43 @@ export default function UploadImagesView() {
   const maxImages = 20;
   const isMax = images.length >= maxImages;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: implement upload logic
-    alert("Bilder og melding sendt! (ikke implementert)");
+    const newStatus: Record<number, UploadStatus> = {};
+    for (let i = 0; i < images.length; i++) {
+      newStatus[i] = { uploading: true, uploaded: false };
+    }
+    setStatus(newStatus);
+    let idx = 0;
+    for (const imageFile of images) {
+      try {
+        const path = `uploads/${Date.now()}-${imageFile.name}`;
+        const filesInfo = {
+          path,
+          originalFileName: imageFile.name,
+          fileSize: imageFile.size,
+        };
+        const { presignedUrl } = await preSignedUrlAction(filesInfo);
+        const res = await uploadToS3(presignedUrl, imageFile);
+        if (res.status !== 200) throw new Error("Failed to upload image");
+        setStatus((prev) => ({
+          ...prev,
+          [idx]: { uploading: false, uploaded: true },
+        }));
+      } catch (err) {
+        setStatus((prev) => ({
+          ...prev,
+          [idx]: {
+            uploading: false,
+            uploaded: false,
+            error: "Feil ved opplasting",
+          },
+        }));
+      }
+      idx++;
+    }
+    // TODO: handle message upload
+    // alert("Bilder og melding sendt! (ikke implementert)");
   }
 
   return (
@@ -47,7 +89,12 @@ export default function UploadImagesView() {
         {images.length > 0 && (
           <div className="flex flex-wrap gap-3 mt-2">
             {images.map((file, idx) => (
-              <ImagePreview key={idx} file={file} />
+              <ImagePreview
+                key={idx}
+                file={file}
+                uploading={status[idx]?.uploading}
+                uploaded={status[idx]?.uploaded}
+              />
             ))}
           </div>
         )}
