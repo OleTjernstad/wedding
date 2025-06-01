@@ -6,9 +6,15 @@ interface ImagePreviewProps {
   file: File;
   uploading?: boolean;
   uploaded?: boolean;
+  notUploaded?: boolean;
 }
 
-export function ImagePreview({ file, uploading, uploaded }: ImagePreviewProps) {
+export function ImagePreview({
+  file,
+  uploading,
+  uploaded,
+  notUploaded,
+}: ImagePreviewProps) {
   const [url, setUrl] = useState<string>("");
 
   useEffect(() => {
@@ -64,6 +70,33 @@ export function ImagePreview({ file, uploading, uploaded }: ImagePreviewProps) {
               strokeLinejoin="round"
               strokeWidth={3}
               d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div>
+      )}
+      {notUploaded && !uploading && !uploaded && (
+        <div className="absolute top-1 right-1 bg-gray-400 rounded-full p-1">
+          <svg
+            className="h-4 w-4 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="6"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+            />
+            <line
+              x1="8"
+              y1="12"
+              x2="16"
+              y2="12"
+              stroke="currentColor"
+              strokeWidth="2"
             />
           </svg>
         </div>

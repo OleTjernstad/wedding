@@ -20,12 +20,22 @@ const path = paths.uploads;
 export default function UploadImagesView() {
   const [images, setImages] = useState<File[]>([]);
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<Record<number, UploadStatus>>({});
+  const [status, setStatus] = useState<Map<File, UploadStatus>>(new Map());
 
   function handleDrop(files: File[]) {
     setImages((prev) => {
-      const all = [...prev, ...files];
-      return all.slice(0, 20);
+      const all = [...prev, ...files].slice(0, 20);
+      // Set status for new images as 'not uploaded'
+      setStatus((prevStatus) => {
+        const newStatus = new Map(prevStatus);
+        for (const file of files) {
+          if (!newStatus.has(file) && all.includes(file)) {
+            newStatus.set(file, { uploading: false, uploaded: false });
+          }
+        }
+        return newStatus;
+      });
+      return all;
     });
   }
 
@@ -34,11 +44,13 @@ export default function UploadImagesView() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const newStatus: Record<number, UploadStatus> = {};
-    for (let i = 0; i < images.length; i++) {
-      newStatus[i] = { uploading: true, uploaded: false };
-    }
-    setStatus(newStatus);
+    setStatus((prevStatus) => {
+      const newStatus = new Map(prevStatus);
+      images.forEach((file) => {
+        newStatus.set(file, { uploading: true, uploaded: false });
+      });
+      return newStatus;
+    });
     let idx = 0;
     for (const imageFile of images) {
       try {
@@ -48,27 +60,26 @@ export default function UploadImagesView() {
           fileSize: imageFile.size,
         };
         const { presignedUrl } = await preSignedUrlAction(filesInfo);
-
         const res = await uploadToS3(presignedUrl, imageFile);
-
         if (res.status !== 200) throw new Error("Failed to upload image");
-
-        setStatus((prev) => ({
-          ...prev,
-          [idx]: { uploading: false, uploaded: true },
-        }));
+        setStatus((prevStatus) => {
+          const newStatus = new Map(prevStatus);
+          newStatus.set(imageFile, { uploading: false, uploaded: true });
+          return newStatus;
+        });
       } catch (err) {
-        setStatus((prev) => ({
-          ...prev,
-          [idx]: {
+        setStatus((prevStatus) => {
+          const newStatus = new Map(prevStatus);
+          newStatus.set(imageFile, {
             uploading: false,
             uploaded: false,
             error:
               err instanceof Error
                 ? `Feil ved opplasting: ${err.message}`
                 : "Feil ved opplasting",
-          },
-        }));
+          });
+          return newStatus;
+        });
       }
       idx++;
     }
@@ -96,14 +107,21 @@ export default function UploadImagesView() {
         {/* Preview thumbnails */}
         {images.length > 0 && (
           <div className="flex flex-wrap gap-3 mt-2">
-            {images.map((file, idx) => (
-              <ImagePreview
-                key={idx}
-                file={file}
-                uploading={status[idx]?.uploading}
-                uploaded={status[idx]?.uploaded}
-              />
-            ))}
+            {images.map((file, idx) => {
+              const fileStatus = status.get(file) || {
+                uploading: false,
+                uploaded: false,
+              };
+              return (
+                <ImagePreview
+                  key={idx}
+                  file={file}
+                  uploading={fileStatus.uploading}
+                  uploaded={fileStatus.uploaded}
+                  notUploaded={!fileStatus.uploading && !fileStatus.uploaded}
+                />
+              );
+            })}
           </div>
         )}
         <div>
