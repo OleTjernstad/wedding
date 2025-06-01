@@ -58,7 +58,10 @@ export default function UploadImagesView() {
           [idx]: {
             uploading: false,
             uploaded: false,
-            error: "Feil ved opplasting",
+            error:
+              err instanceof Error
+                ? `Feil ved opplasting: ${err.message}`
+                : "Feil ved opplasting",
           },
         }));
       }
