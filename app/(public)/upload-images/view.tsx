@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/admin/dropzone";
+import { ImagePreview } from "./image-preview";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
@@ -10,8 +11,14 @@ export default function UploadImagesView() {
   const [message, setMessage] = useState("");
 
   function handleDrop(files: File[]) {
-    setImages(files);
+    setImages((prev) => {
+      const all = [...prev, ...files];
+      return all.slice(0, 20);
+    });
   }
+
+  const maxImages = 20;
+  const isMax = images.length >= maxImages;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,7 +36,21 @@ export default function UploadImagesView() {
         opp dine favorittbilder her – tusen takk!
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <DropZone setImages={handleDrop} />
+        <DropZone setImages={handleDrop} disabled={isMax} />
+        {isMax && (
+          <div className="text-red-600 font-semibold text-sm mt-1">
+            Maksimalt antall bilder er nådd ({maxImages}). Vennligst last opp
+            disse før du legger til flere.
+          </div>
+        )}
+        {/* Preview thumbnails */}
+        {images.length > 0 && (
+          <div className="flex flex-wrap gap-3 mt-2">
+            {images.map((file, idx) => (
+              <ImagePreview key={idx} file={file} />
+            ))}
+          </div>
+        )}
         <div>
           <label
             htmlFor="message"

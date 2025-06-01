@@ -4,8 +4,9 @@ import { useDropzone } from "react-dropzone";
 
 interface DropZoneProps {
   setImages: (images: File[]) => void;
+  disabled?: boolean;
 }
-export function DropZone({ setImages }: DropZoneProps) {
+export function DropZone({ setImages, disabled }: DropZoneProps) {
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       accept: {
@@ -16,8 +17,9 @@ export function DropZone({ setImages }: DropZoneProps) {
       maxFiles: 20,
       maxSize: 10485760, // 10 MB per file
       onDrop: (incomingFiles) => {
-        setImages(incomingFiles);
+        if (!disabled) setImages(incomingFiles);
       },
+      disabled,
     });
   return (
     <div
@@ -28,9 +30,11 @@ export function DropZone({ setImages }: DropZoneProps) {
             "border-blue-500": isFocused,
             "border-green-500": isDragAccept,
             "border-red-500": isDragReject,
+            "opacity-50 pointer-events-none": disabled,
           }
         ),
       })}
+      aria-disabled={disabled}
     >
       <Plus
         className={cn("h-8 w-8 text-gray-400", {
@@ -40,9 +44,11 @@ export function DropZone({ setImages }: DropZoneProps) {
         })}
       />
       <span className="ml-4 text-gray-500 text-sm">
-        Dra inn eller klikk for å velge bilder (maks 20)
+        {disabled
+          ? "Maks antall bilder nådd. Last opp før du legger til flere."
+          : "Dra inn eller klikk for å velge bilder (maks 20)"}
       </span>
-      <input {...getInputProps()} multiple />
+      <input {...getInputProps()} multiple disabled={disabled} />
     </div>
   );
 }
