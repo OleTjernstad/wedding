@@ -1,7 +1,10 @@
 "use client";
 
+import { FileWithStatus, UploadStatus } from "./type";
+
 import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/admin/dropzone";
+import Image from "next/image";
 import { ImagePreview } from "./image-preview";
 import { Textarea } from "@/components/ui/textarea";
 import { paths } from "@/lib/s3/paths";
@@ -9,82 +12,98 @@ import { preSignedUrlAction } from "./pre-sign-url";
 import { uploadToS3 } from "@/lib/s3/file-upload-helpers";
 import { useState } from "react";
 
-interface UploadStatus {
-  uploading: boolean;
-  uploaded: boolean;
-  error?: string;
-}
-
 const path = paths.uploads;
 
 export default function UploadImagesView() {
-  const [images, setImages] = useState<File[]>([]);
+  const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<Map<File, UploadStatus>>(new Map());
+  const [isUploading, setIsUploading] = useState(false);
 
   function handleDrop(files: File[]) {
-    setImages((prev) => {
-      const all = [...prev, ...files].slice(0, 20);
-      // Set status for new images as 'not uploaded'
-      setStatus((prevStatus) => {
-        const newStatus = new Map(prevStatus);
-        for (const file of files) {
-          if (!newStatus.has(file) && all.includes(file)) {
-            newStatus.set(file, { uploading: false, uploaded: false });
-          }
-        }
-        return newStatus;
-      });
-      return all;
-    });
-  }
+    const newFiles = files.map((file) => ({
+      file: Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      }),
+      status: "idle" as UploadStatus,
+      progress: 0,
+    }));
 
-  const maxImages = 20;
-  const isMax = images.length >= maxImages;
+    setFiles((prev) => [...prev, ...newFiles]);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus((prevStatus) => {
-      const newStatus = new Map(prevStatus);
-      images.forEach((file) => {
-        newStatus.set(file, { uploading: true, uploaded: false });
-      });
-      return newStatus;
-    });
-    let idx = 0;
-    for (const imageFile of images) {
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+
+    // Update all files to uploading status
+    setFiles((prev) =>
+      prev.map((fileData) => ({
+        ...fileData,
+        status: "uploading",
+        progress: 0,
+      }))
+    );
+
+    // Upload each file individually
+    const uploadPromises = files.map(async (fileData, index) => {
       try {
         const filesInfo = {
           path,
-          originalFileName: imageFile.name,
-          fileSize: imageFile.size,
+          originalFileName: fileData.file.name,
+          fileSize: fileData.file.size,
         };
         const { presignedUrl } = await preSignedUrlAction(filesInfo);
-        const res = await uploadToS3(presignedUrl, imageFile);
-        if (res.status !== 200) throw new Error("Failed to upload image");
-        setStatus((prevStatus) => {
-          const newStatus = new Map(prevStatus);
-          newStatus.set(imageFile, { uploading: false, uploaded: true });
-          return newStatus;
+        const res = await uploadToS3(presignedUrl, fileData.file);
+
+        // Update status to success
+        setFiles((prev) => {
+          const newFiles = [...prev];
+          newFiles[index] = {
+            ...newFiles[index],
+            status: "success",
+            progress: 100,
+            uploadedUrl: presignedUrl.url,
+          };
+          return newFiles;
         });
-      } catch (err) {
-        setStatus((prevStatus) => {
-          const newStatus = new Map(prevStatus);
-          newStatus.set(imageFile, {
-            uploading: false,
-            uploaded: false,
-            error:
-              err instanceof Error
-                ? `Feil ved opplasting: ${err.message}`
-                : "Feil ved opplasting",
-          });
-          return newStatus;
+
+        console.log(
+          `Successfully uploaded: ${fileData.file.name} to ${presignedUrl.url}`
+        );
+      } catch (error) {
+        console.error(`Failed to upload ${fileData.file.name}:`, error);
+
+        // Update status to error
+        setFiles((prev) => {
+          const newFiles = [...prev];
+          newFiles[index] = {
+            ...newFiles[index],
+            status: "error",
+            error: error instanceof Error ? error.message : "Upload failed",
+          };
+          return newFiles;
         });
       }
-      idx++;
+    });
+
+    await Promise.all(uploadPromises);
+    setIsUploading(false);
+
+    // Show success message if all uploads succeeded
+    const successCount = files.filter((f) => f.status === "success").length;
+    if (successCount === files.length) {
+      console.log(`All ${successCount} images uploaded successfully!`);
     }
-    // TODO: handle message upload
-    // alert("Bilder og melding sendt! (ikke implementert)");
+  }
+  function removeFile(index: number) {
+    setFiles((prev) => {
+      const newFiles = [...prev];
+      URL.revokeObjectURL(newFiles[index].file.preview);
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
   }
 
   return (
@@ -97,33 +116,27 @@ export default function UploadImagesView() {
         opp dine favorittbilder her – tusen takk!
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <DropZone setImages={handleDrop} disabled={isMax} />
-        {isMax && (
+        <DropZone
+          setImages={handleDrop}
+          // disabled={isMax}
+        />
+        {/* {isMax && (
           <div className="text-red-600 font-semibold text-sm mt-1">
             Maksimalt antall bilder er nådd ({maxImages}). Vennligst last opp
             disse før du legger til flere.
           </div>
-        )}
+        )} */}
         {/* Preview thumbnails */}
-        {images.length > 0 && (
-          <div className="flex flex-wrap gap-3 mt-2">
-            {images.map((file, idx) => {
-              const fileStatus = status.get(file) || {
-                uploading: false,
-                uploaded: false,
-              };
-              return (
-                <ImagePreview
-                  key={idx}
-                  file={file}
-                  uploading={fileStatus.uploading}
-                  uploaded={fileStatus.uploaded}
-                  notUploaded={!fileStatus.uploading && !fileStatus.uploaded}
-                />
-              );
-            })}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {files.map((fileData, index) => (
+            <ImagePreview
+              fileData={fileData}
+              key={index}
+              removeFile={() => removeFile(index)}
+              isUploading={isUploading}
+            />
+          ))}
+        </div>
         <div>
           <label
             htmlFor="message"
