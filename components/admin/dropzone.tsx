@@ -34,9 +34,7 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
   });
 
   // Card border styling
-  const cardBorder = cn(
-    "border border-gray-300 rounded-xl shadow-sm bg-white"
-  );
+  const cardBorder = cn("border border-gray-300 rounded-xl shadow-sm bg-white");
 
   // Small dropzone height (image aspect ratio, e.g. 4:3, for 4 images wide)
   const smallZone = cn(
@@ -52,7 +50,8 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
         {/* Invisible dropzone for drag events */}
         <div
           {...getRootProps({
-            className: "fixed inset-0 w-full h-full z-50 pointer-events-auto opacity-0",
+            className:
+              "fixed inset-0 w-full h-full z-50 pointer-events-auto opacity-0",
           })}
           aria-disabled={disabled}
         >
@@ -89,11 +88,7 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
         </span>
       </div>
       {/* Previews below dropzone, inside card border */}
-      {children && (
-        <div className="mt-4">
-          {children}
-        </div>
-      )}
+      {children && <div className="mt-4">{children}</div>}
     </div>
   );
 }
