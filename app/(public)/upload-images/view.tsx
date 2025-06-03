@@ -1,6 +1,7 @@
 "use client";
 
 import { FileWithStatus, UploadStatus } from "./type";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/admin/dropzone";
@@ -10,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { paths } from "@/lib/s3/paths";
 import { preSignedUrlAction } from "./pre-sign-url";
 import { uploadToS3 } from "@/lib/s3/file-upload-helpers";
-import { useState } from "react";
 
 const path = paths.uploads;
 
@@ -18,9 +18,11 @@ export default function UploadImagesView() {
   const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [message, setMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [allUploaded, setAllUploaded] = useState<string[]>([]); // store all uploaded image URLs
   const maxFiles = 20;
   const isMax = files.length >= maxFiles;
+  const formRef = useRef<HTMLFormElement>(null);
 
   function handleDrop(files: File[]) {
     const newFiles = files.map((file) => ({
@@ -30,7 +32,6 @@ export default function UploadImagesView() {
       status: "idle" as UploadStatus,
       progress: 0,
     }));
-
     setFiles((prev) => [...prev, ...newFiles]);
   }
 
@@ -101,11 +102,17 @@ export default function UploadImagesView() {
 
     await Promise.all(uploadPromises);
     setIsUploading(false);
-
     // Show success message if all uploads succeeded
     const successCount = files.filter((f) => f.status === "success").length;
     if (successCount === files.length) {
-      console.log(`All ${successCount} images uploaded successfully!`);
+      // Add all uploaded image URLs to allUploaded
+      setAllUploaded((prev) => [
+        ...prev,
+        ...files
+          .filter((f) => f.status === "success" && f.uploadedUrl)
+          .map((f) => f.uploadedUrl!),
+      ]);
+      setShowThankYou(true);
     }
   }
   function removeFile(index: number) {
@@ -115,6 +122,12 @@ export default function UploadImagesView() {
       newFiles.splice(index, 1);
       return newFiles;
     });
+  }
+  function handleReset() {
+    setFiles([]);
+    setMessage("");
+    setShowThankYou(false);
+    if (formRef.current) formRef.current.reset();
   }
 
   return (
@@ -126,12 +139,12 @@ export default function UploadImagesView() {
         Vi blir veldig glade hvis du vil dele bilder fra bryllupet med oss. Last
         opp dine favorittbilder her – tusen takk!
       </p>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <DropZone setImages={handleDrop} disabled={isMax}>
+      <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
+        <DropZone setImages={handleDrop} disabled={isMax || isUploading}>
           {isMax && (
             <div className="mb-2 p-2 rounded bg-red-100 border border-red-300 text-red-700 text-center font-semibold text-sm">
-              Maksimalt antall bilder er nådd ({maxFiles}). Vennligst last opp eller
-              fjern noen før du legger til flere.
+              Maksimalt antall bilder er nådd ({maxFiles}). Vennligst last opp
+              eller fjern noen før du legger til flere.
             </div>
           )}
           <div className="mt-4 grid grid-cols-4 gap-4 min-h-[6rem]">
@@ -145,12 +158,6 @@ export default function UploadImagesView() {
             ))}
           </div>
         </DropZone>
-        {/* {isMax && (
-          <div className="text-red-600 font-semibold text-sm mt-1">
-            Maksimalt antall bilder er nådd ({maxImages}). Vennligst last opp
-            disse før du legger til flere.
-          </div>
-        )} */}
         <div>
           <label
             htmlFor="message"
@@ -169,10 +176,54 @@ export default function UploadImagesView() {
         <Button
           type="submit"
           className="w-full bg-purple-700 hover:bg-purple-800"
+          disabled={isUploading || files.length === 0}
         >
           Last opp bilder
         </Button>
       </form>
+      {/* Thank you overlay */}
+      {showThankYou && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-xl shadow-xl p-8 flex flex-col items-center max-w-xs w-full">
+            <span className="text-3xl mb-4">🎉</span>
+            <h2 className="text-xl font-bold mb-2 text-purple-800 text-center">
+              Tusen takk for bildene!
+            </h2>
+            <p className="mb-6 text-gray-700 text-center">
+              Vi setter stor pris på at du deler dine minner med oss.
+            </p>
+            <Button
+              onClick={handleReset}
+              className="w-full bg-purple-700 hover:bg-purple-800"
+            >
+              Legg til flere bilder
+            </Button>
+          </div>
+        </div>
+      )}
+      {/* All uploaded images section */}
+      {allUploaded.length > 0 && (
+        <div className="mt-12">
+          <h3 className="text-lg font-bold mb-4 text-purple-800">
+            Alle opplastede bilder
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {allUploaded.map((url, idx) => (
+              <div
+                key={idx}
+                className="relative aspect-square rounded overflow-hidden border bg-gray-50"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt="Uploaded"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
