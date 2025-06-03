@@ -53,3 +53,19 @@ model ReceivedGift {
 
   @@map("received-gifts")
 }
+
+model UploadedImage {
+  id           String   @id @default(cuid())
+  bucket       String
+  fileName     String   @unique
+  path         String   @default("")
+  url          String   @default("")
+  originalName String
+  createdAt    DateTime @default(now())
+  mimeType     String
+  fileSize     Int
+  width        Int
+  height       Int
+
+  @@map("uploaded-images")
+}

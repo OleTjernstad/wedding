@@ -5,11 +5,12 @@ import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/admin/dropzone";
-import Image from "next/image";
 import { ImagePreview } from "./image-preview";
 import { Textarea } from "@/components/ui/textarea";
+import { getImageDimensions } from "@/utils/image-size";
 import { paths } from "@/lib/s3/paths";
 import { preSignedUrlAction } from "./pre-sign-url";
+import { saveToDBAction } from "./save-to-db.action";
 import { uploadToS3 } from "@/lib/s3/file-upload-helpers";
 
 const path = paths.uploads;
@@ -67,7 +68,19 @@ export default function UploadImagesView() {
         const { presignedUrl } = await preSignedUrlAction(filesInfo);
         const res = await uploadToS3(presignedUrl, fileData.file);
 
-        console.log(res);
+        if (res.status !== 200) throw new Error("Failed to upload image");
+
+        const dim = await getImageDimensions(fileData.file);
+
+        await saveToDBAction({
+          fileNameInBucket: presignedUrl.fileNameInBucket,
+          fileSize: presignedUrl.fileSize,
+          mimeType: fileData.file.type,
+          originalFileName: presignedUrl.originalFileName,
+          width: dim.width,
+          height: dim.height,
+          path,
+        });
 
         // Update status to success
         setFiles((prev) => {
