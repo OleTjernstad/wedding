@@ -19,6 +19,9 @@ export default function UploadImagesView() {
   const [message, setMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
+  const maxFiles = 20;
+  const isMax = files.length >= maxFiles;
+
   function handleDrop(files: File[]) {
     const newFiles = files.map((file) => ({
       file: Object.assign(file, {
@@ -124,7 +127,13 @@ export default function UploadImagesView() {
         opp dine favorittbilder her – tusen takk!
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <DropZone setImages={handleDrop}>
+        <DropZone setImages={handleDrop} disabled={isMax}>
+          {isMax && (
+            <div className="mb-2 p-2 rounded bg-red-100 border border-red-300 text-red-700 text-center font-semibold text-sm">
+              Maksimalt antall bilder er nådd ({maxFiles}). Vennligst last opp eller
+              fjern noen før du legger til flere.
+            </div>
+          )}
           <div className="mt-4 grid grid-cols-4 gap-4 min-h-[6rem]">
             {files.map((fileData, index) => (
               <ImagePreview
