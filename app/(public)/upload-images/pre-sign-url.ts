@@ -2,7 +2,6 @@
 
 import { PresignedUrlProp, ShortFileProp } from "@/lib/s3/types";
 
-import { auth } from "@clerk/nextjs/server";
 import { createPresignedUrlToUpload } from "@/lib/s3/manage";
 import { env } from "@/utils/env";
 import { nanoid } from "nanoid";
@@ -15,8 +14,6 @@ export async function preSignedUrlAction({
   originalFileName,
   path,
 }: ShortFileProp) {
-  await auth.protect();
-
   const fileName = `${nanoid(8)}-${originalFileName}`;
 
   const url = await createPresignedUrlToUpload({
