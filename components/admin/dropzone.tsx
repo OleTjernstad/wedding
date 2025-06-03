@@ -9,7 +9,6 @@ interface DropZoneProps {
   children?: React.ReactNode;
 }
 export function DropZone({ setImages, disabled, children }: DropZoneProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
   const {
     getRootProps,
     getInputProps,
@@ -17,6 +16,7 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
     isDragAccept,
     isDragReject,
     isDragActive,
+    isFileDialogActive,
   } = useDropzone({
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
@@ -36,27 +36,41 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
   // Card border styling
   const cardBorder = cn("border border-gray-300 rounded-xl shadow-sm bg-white");
 
-  // Small dropzone height (image aspect ratio, e.g. 4:3, for 4 images wide)
-  const smallZone = cn(
-    "h-28 w-full max-w-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-purple-50 transition-colors"
-  );
-
   // Default: small clickable dropzone with previews below, all inside card border
   return (
     <div className={cn("w-full p-4", cardBorder)}>
       <div
         {...getRootProps({
-          className: smallZone,
+          className: cn(
+            "focus-visible:outline-none relative h-[96px] rounded-md border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors",
+            {
+              "border-blue-500 ring-2 ring-blue-200": isFocused,
+              "border-green-500 bg-green-50": isDragAccept,
+              "border-red-500 bg-red-50": isDragReject,
+              "border-purple-600 bg-purple-50": isDragActive,
+              "border-yellow-500 bg-yellow-50 animate-pulse":
+                isFileDialogActive,
+              "opacity-50 pointer-events-none": disabled,
+            }
+          ),
         })}
         aria-disabled={disabled}
       >
-        <input {...getInputProps()} multiple disabled={disabled} />
-        <Plus className="h-8 w-8 text-gray-400 mr-2" />
-        <span className="text-gray-500 text-sm">
+        <Plus
+          className={cn("h-8 w-8 text-gray-400", {
+            "text-blue-500": isFocused,
+            "text-green-500": isDragAccept,
+            "text-red-500": isDragReject,
+            "text-purple-600": isDragActive,
+            "text-yellow-500 animate-pulse": isFileDialogActive,
+          })}
+        />
+        <span className="ml-4 text-gray-500 text-sm">
           {disabled
             ? "Maks antall bilder nådd. Last opp før du legger til flere."
             : "Dra inn eller klikk for å velge bilder (maks 20)"}
         </span>
+        <input {...getInputProps()} multiple disabled={disabled} />
       </div>
       {/* Previews below dropzone, inside card border */}
       {children && <div className="mt-4">{children}</div>}

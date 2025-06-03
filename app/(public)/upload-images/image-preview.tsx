@@ -79,10 +79,6 @@ export function ImagePreview({
                 : fileData.file.name}
             </span>
           </div>
-          <span className="text-xs font-medium">
-            {fileData.status === "uploading" &&
-              `${Math.round(fileData.progress)}%`}
-          </span>
         </div>
         {fileData.status === "uploading" && (
           <div className="w-full bg-muted rounded-full h-1 mt-1">

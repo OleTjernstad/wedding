@@ -39,15 +39,21 @@ export default function UploadImagesView() {
 
     // Update all files to uploading status
     setFiles((prev) =>
-      prev.map((fileData) => ({
-        ...fileData,
-        status: "uploading",
-        progress: 0,
-      }))
+      prev.map((fileData) => {
+        if (fileData.status === "success") {
+          return fileData;
+        }
+        return {
+          ...fileData,
+          status: "uploading",
+          progress: 0,
+        };
+      })
     );
 
     // Upload each file individually
     const uploadPromises = files.map(async (fileData, index) => {
+      if (fileData.status === "success") return;
       try {
         const filesInfo = {
           path,
@@ -56,6 +62,8 @@ export default function UploadImagesView() {
         };
         const { presignedUrl } = await preSignedUrlAction(filesInfo);
         const res = await uploadToS3(presignedUrl, fileData.file);
+
+        console.log(res);
 
         // Update status to success
         setFiles((prev) => {
@@ -116,27 +124,24 @@ export default function UploadImagesView() {
         opp dine favorittbilder her – tusen takk!
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <DropZone
-          setImages={handleDrop}
-          // disabled={isMax}
-        />
+        <DropZone setImages={handleDrop}>
+          <div className="mt-4 grid grid-cols-4 gap-4 min-h-[6rem]">
+            {files.map((fileData, index) => (
+              <ImagePreview
+                fileData={fileData}
+                key={index}
+                removeFile={() => removeFile(index)}
+                isUploading={isUploading}
+              />
+            ))}
+          </div>
+        </DropZone>
         {/* {isMax && (
           <div className="text-red-600 font-semibold text-sm mt-1">
             Maksimalt antall bilder er nådd ({maxImages}). Vennligst last opp
             disse før du legger til flere.
           </div>
         )} */}
-        {/* Preview thumbnails */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {files.map((fileData, index) => (
-            <ImagePreview
-              fileData={fileData}
-              key={index}
-              removeFile={() => removeFile(index)}
-              isUploading={isUploading}
-            />
-          ))}
-        </div>
         <div>
           <label
             htmlFor="message"
