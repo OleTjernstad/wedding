@@ -16,10 +16,14 @@ export async function saveToDBAction({
   height,
   width,
   path,
+  message,
+  batchId,
 }: Omit<PresignedUrlProp, "url"> & {
   mimeType: string;
   height: number;
   width: number;
+  message?: string;
+  batchId?: string;
 }) {
   const media = await db.uploadedImage.create({
     data: {
@@ -32,6 +36,8 @@ export async function saveToDBAction({
       width,
       path,
       url: `https://${env.S3_ENDPOINT}/${bucketName}${path}${fileNameInBucket}`,
+      message,
+      batchId,
     },
   });
 

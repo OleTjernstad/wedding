@@ -8,6 +8,7 @@ import { DropZone } from "@/components/admin/dropzone";
 import { ImagePreview } from "./image-preview";
 import { Textarea } from "@/components/ui/textarea";
 import { getImageDimensions } from "@/utils/image-size";
+import { nanoid } from "nanoid";
 import { paths } from "@/lib/s3/paths";
 import { preSignedUrlAction } from "./pre-sign-url";
 import { saveToDBAction } from "./save-to-db.action";
@@ -21,6 +22,7 @@ export default function UploadImagesView() {
   const [isUploading, setIsUploading] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [allUploaded, setAllUploaded] = useState<string[]>([]); // store all uploaded image URLs
+
   const maxFiles = 20;
   const isMax = files.length >= maxFiles;
   const formRef = useRef<HTMLFormElement>(null);
@@ -41,6 +43,9 @@ export default function UploadImagesView() {
     if (files.length === 0) return;
 
     setIsUploading(true);
+
+    // Generate a batchId for this upload session
+    const newBatchId = nanoid();
 
     // Update all files to uploading status
     setFiles((prev) =>
@@ -80,6 +85,8 @@ export default function UploadImagesView() {
           width: dim.width,
           height: dim.height,
           path,
+          message: message || undefined,
+          batchId: newBatchId,
         });
 
         // Update status to success

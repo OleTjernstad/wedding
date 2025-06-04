@@ -66,6 +66,8 @@ model UploadedImage {
   fileSize     Int
   width        Int
   height       Int
+  message      String?  @db.Text // Optional message from user
+  batchId      String? // Identifier for batch uploads
 
   @@map("uploaded-images")
 }
