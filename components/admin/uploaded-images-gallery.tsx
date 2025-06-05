@@ -17,17 +17,34 @@ export function UploadedImagesGallery({
     window.open(url, "_blank");
   }
 
+  function downloadBatch(batch: any[]) {
+    const params = batch
+      .map(
+        (img) =>
+          `bucket=${encodeURIComponent(img.bucket)}&fileName=${encodeURIComponent(
+            img.fileName
+          )}&path=${encodeURIComponent(img.path)}&originalName=${encodeURIComponent(
+            img.originalName
+          )}`
+      )
+      .join("&");
+    const url = `/admin/uploaded-images/download-batch?${params}`;
+    window.open(url, "_blank");
+  }
+
   return (
     <div className="space-y-12">
       {Object.entries(batches).map(([batchId, images]) => (
         <div key={batchId}>
-          <div className="mb-2">
+          <div className="mb-2 flex items-center gap-4">
             <span className="font-bold text-lg">Batch: {batchId}</span>
-            {images[0]?.message && (
-              <div className="text-gray-600 italic mt-1">
-                {images[0].message}
-              </div>
-            )}
+            <button
+              type="button"
+              className="px-3 py-1 rounded bg-purple-700 text-white hover:bg-purple-800 text-sm"
+              onClick={() => downloadBatch(images)}
+            >
+              Last ned alle i batch
+            </button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {images.map((img) => (
