@@ -21,10 +21,7 @@ export default function UploadImagesView() {
   const [message, setMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
-  const [allUploaded, setAllUploaded] = useState<string[]>([]); // store all uploaded image URLs
 
-  const maxFiles = 20;
-  const isMax = files.length >= maxFiles;
   const formRef = useRef<HTMLFormElement>(null);
 
   function handleDrop(files: File[]) {
@@ -43,11 +40,7 @@ export default function UploadImagesView() {
     if (files.length === 0) return;
 
     setIsUploading(true);
-
-    // Generate a batchId for this upload session
     const newBatchId = nanoid();
-
-    // Update all files to uploading status
     setFiles((prev) =>
       prev.map((fileData) => {
         if (fileData.status === "success") {
@@ -61,79 +54,65 @@ export default function UploadImagesView() {
       })
     );
 
-    // Upload each file individually
-    const uploadPromises = files.map(async (fileData, index) => {
-      if (fileData.status === "success") return;
-      try {
-        const filesInfo = {
-          path,
-          originalFileName: fileData.file.name,
-          fileSize: fileData.file.size,
-        };
-        const { presignedUrl } = await preSignedUrlAction(filesInfo);
-        const res = await uploadToS3(presignedUrl, fileData.file);
-
-        if (res.status !== 200) throw new Error("Failed to upload image");
-
-        const dim = await getImageDimensions(fileData.file);
-
-        await saveToDBAction({
-          fileNameInBucket: presignedUrl.fileNameInBucket,
-          fileSize: presignedUrl.fileSize,
-          mimeType: fileData.file.type,
-          originalFileName: presignedUrl.originalFileName,
-          width: dim.width,
-          height: dim.height,
-          path,
-          message: message || undefined,
-          batchId: newBatchId,
-        });
-
-        // Update status to success
-        setFiles((prev) => {
-          const newFiles = [...prev];
-          newFiles[index] = {
-            ...newFiles[index],
-            status: "success",
-            progress: 100,
-            uploadedUrl: presignedUrl.url,
+    // Upload in chunks
+    const chunkSize = 5; // You can adjust this number
+    for (let i = 0; i < files.length; i += chunkSize) {
+      const chunk = files.slice(i, i + chunkSize);
+      const uploadPromises = chunk.map(async (fileData, indexInChunk) => {
+        const index = i + indexInChunk;
+        if (fileData.status === "success") return;
+        try {
+          const filesInfo = {
+            path,
+            originalFileName: fileData.file.name,
+            fileSize: fileData.file.size,
           };
-          return newFiles;
-        });
-
-        console.log(
-          `Successfully uploaded: ${fileData.file.name} to ${presignedUrl.url}`
-        );
-      } catch (error) {
-        console.error(`Failed to upload ${fileData.file.name}:`, error);
-
-        // Update status to error
-        setFiles((prev) => {
-          const newFiles = [...prev];
-          newFiles[index] = {
-            ...newFiles[index],
-            status: "error",
-            error: error instanceof Error ? error.message : "Upload failed",
-          };
-          return newFiles;
-        });
-      }
-    });
-
-    await Promise.all(uploadPromises);
-    setIsUploading(false);
-    // Show success message if all uploads succeeded
-    const successCount = files.filter((f) => f.status === "success").length;
-    if (successCount === files.length) {
-      // Add all uploaded image URLs to allUploaded
-      setAllUploaded((prev) => [
-        ...prev,
-        ...files
-          .filter((f) => f.status === "success" && f.uploadedUrl)
-          .map((f) => f.uploadedUrl!),
-      ]);
-      setShowThankYou(true);
+          const { presignedUrl } = await preSignedUrlAction(filesInfo);
+          const res = await uploadToS3(presignedUrl, fileData.file);
+          if (res.status !== 200) throw new Error("Failed to upload image");
+          const dim = await getImageDimensions(fileData.file);
+          await saveToDBAction({
+            fileNameInBucket: presignedUrl.fileNameInBucket,
+            fileSize: presignedUrl.fileSize,
+            mimeType: fileData.file.type,
+            originalFileName: presignedUrl.originalFileName,
+            width: dim.width,
+            height: dim.height,
+            path,
+            message: message || undefined,
+            batchId: newBatchId,
+          });
+          setFiles((prev) => {
+            const newFiles = [...prev];
+            newFiles[index] = {
+              ...newFiles[index],
+              status: "success",
+              progress: 100,
+              uploadedUrl: presignedUrl.url,
+            };
+            return newFiles;
+          });
+          console.log(
+            `Successfully uploaded: ${fileData.file.name} to ${presignedUrl.url}`
+          );
+        } catch (error) {
+          console.error(`Failed to upload ${fileData.file.name}:`, error);
+          setFiles((prev) => {
+            const newFiles = [...prev];
+            newFiles[index] = {
+              ...newFiles[index],
+              status: "error",
+              error: error instanceof Error ? error.message : "Upload failed",
+            };
+            return newFiles;
+          });
+        }
+      });
+      await Promise.all(uploadPromises);
     }
+    setIsUploading(false);
+
+    setShowThankYou(true);
   }
   function removeFile(index: number) {
     setFiles((prev) => {
@@ -168,13 +147,7 @@ export default function UploadImagesView() {
         om du foretrekker det. - Tusen takk!
       </p>
       <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
-        <DropZone setImages={handleDrop} disabled={isMax || isUploading}>
-          {isMax && (
-            <div className="mb-2 p-2 rounded bg-red-100 border border-red-300 text-red-700 text-center font-semibold text-sm">
-              Maksimalt antall bilder er nådd ({maxFiles}). Vennligst last opp
-              eller fjern noen før du legger til flere.
-            </div>
-          )}
+        <DropZone setImages={handleDrop} disabled={isUploading}>
           <div className="mt-4 grid grid-cols-4 gap-4 min-h-[6rem]">
             {files.map((fileData, index) => (
               <ImagePreview
@@ -224,31 +197,8 @@ export default function UploadImagesView() {
               onClick={handleReset}
               className="w-full bg-purple-700 hover:bg-purple-800"
             >
-              Legg til flere bilder
+              del flere bilder
             </Button>
-          </div>
-        </div>
-      )}
-      {/* All uploaded images section */}
-      {allUploaded.length > 0 && (
-        <div className="mt-12">
-          <h3 className="text-lg font-bold mb-4 text-purple-800">
-            Alle opplastede bilder
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {allUploaded.map((url, idx) => (
-              <div
-                key={idx}
-                className="relative aspect-square rounded overflow-hidden border bg-gray-50"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={url}
-                  alt="Uploaded"
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            ))}
           </div>
         </div>
       )}
