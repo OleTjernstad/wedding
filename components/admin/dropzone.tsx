@@ -1,7 +1,6 @@
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDropzone } from "react-dropzone";
-import { useRef } from "react";
 
 interface DropZoneProps {
   setImages: (images: File[]) => void;
@@ -23,7 +22,6 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
       "image/png": [".png"],
       "image/webp": [".webp"],
     },
-    maxFiles: 20,
     maxSize: 10485760, // 10 MB per file
     onDrop: (incomingFiles) => {
       if (!disabled) setImages(incomingFiles);

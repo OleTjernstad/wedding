@@ -156,8 +156,16 @@ export default function UploadImagesView() {
         Del dine bilder med oss!
       </h1>
       <p className="mb-6 text-gray-700">
-        Vi blir veldig glade hvis du vil dele bilder fra bryllupet med oss. Last
-        opp dine favorittbilder her – tusen takk!
+        Vi blir veldig glade hvis du vil dele favorittbildene dine fra bryllupet
+        med oss.
+        <br /> <br /> Del gjerne bildene dine her, eller send dem til{" "}
+        <a
+          href="mailto:bryllup@fresvoll.no"
+          className="underline text-purple-800"
+        >
+          bryllup@fresvoll.no
+        </a>{" "}
+        om du foretrekker det. - Tusen takk!
       </p>
       <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
         <DropZone setImages={handleDrop} disabled={isMax || isUploading}>
