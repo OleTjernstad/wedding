@@ -71,6 +71,16 @@ export function View({ categories }: ViewProps) {
             </div>
           </div>
         </div>
+
+        {/* Upload Images Link */}
+        <div className="mt-16 text-center">
+          <a
+            href="/upload-images"
+            className="inline-block bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 px-6 rounded-lg shadow transition-colors"
+          >
+            Har du bilder fra bryllupet? Del dem med oss her!
+          </a>
+        </div>
       </div>
     </>
   );
