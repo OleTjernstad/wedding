@@ -75,12 +75,10 @@ export async function getFileFromBucket({
   path: string;
 }) {
   try {
-    await s3Client.statObject(bucketName, `${path}${fileName}`);
+    return await s3Client.getObject(bucketName, `${path}${fileName}`);
   } catch (error) {
-    console.error(error);
-    return null;
+    console.log(error);
   }
-  return await s3Client.getObject(bucketName, `${path}${fileName}`);
 }
 
 export async function deleteFileFromBucket({
