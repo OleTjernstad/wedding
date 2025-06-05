@@ -66,6 +66,8 @@ export function UploadedImagesGallery({
                   width={300}
                   height={300}
                   className="object-cover w-full h-full"
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNs0d68CgAEqwIOzwJ17AAAAABJRU5ErkJggg=="
                 />
 
                 <button
