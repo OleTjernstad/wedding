@@ -21,11 +21,13 @@ export function UploadedImagesGallery({
     const params = batch
       .map(
         (img) =>
-          `bucket=${encodeURIComponent(img.bucket)}&fileName=${encodeURIComponent(
+          `bucket=${encodeURIComponent(
+            img.bucket
+          )}&fileName=${encodeURIComponent(
             img.fileName
-          )}&path=${encodeURIComponent(img.path)}&originalName=${encodeURIComponent(
-            img.originalName
-          )}`
+          )}&path=${encodeURIComponent(
+            img.path
+          )}&originalName=${encodeURIComponent(img.originalName)}`
       )
       .join("&");
     const url = `/admin/uploaded-images/download-batch?${params}`;
@@ -37,15 +39,21 @@ export function UploadedImagesGallery({
       {Object.entries(batches).map(([batchId, images]) => (
         <div key={batchId}>
           <div className="mb-2 flex items-center gap-4">
-            <span className="font-bold text-lg">Batch: {batchId}</span>
+            <span className="font-bold text-lg">Gruppe: {batchId}</span>
             <button
               type="button"
               className="px-3 py-1 rounded bg-purple-700 text-white hover:bg-purple-800 text-sm"
               onClick={() => downloadBatch(images)}
             >
-              Last ned alle i batch
+              Last ned alle i gruppe
             </button>
           </div>
+          {/* Display message from the first image in the group, if present */}
+          {images[0]?.message && (
+            <div className="mb-2 text-gray-700 italic text-sm">
+              {images[0].message}
+            </div>
+          )}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {images.map((img) => (
               <div
@@ -59,13 +67,28 @@ export function UploadedImagesGallery({
                   height={300}
                   className="object-cover w-full h-full"
                 />
-                <Button
+
+                <button
                   type="button"
-                  className="w-full mt-2"
+                  className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md z-10"
                   onClick={() => downloadImage(img)}
+                  title="Last ned bilde"
                 >
-                  Last ned original
-                </Button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5 text-purple-700"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 3v12m0 0l-4-4m4 4l4-4m-9 7h10"
+                    />
+                  </svg>
+                </button>
               </div>
             ))}
           </div>

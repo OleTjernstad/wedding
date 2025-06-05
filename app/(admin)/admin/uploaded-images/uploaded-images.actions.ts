@@ -8,7 +8,7 @@ export async function getUploadedImagesGroupedByBatch() {
   // Group by batchId
   const batches: Record<string, typeof images> = {};
   for (const img of images) {
-    const key = img.batchId || "ingen batch";
+    const key = img.batchId || "ingen gruppe";
     if (!batches[key]) batches[key] = [];
     batches[key].push(img);
   }

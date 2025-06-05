@@ -70,6 +70,17 @@ export function MainNav() {
           Mottatte gaver
         </Link>
         <Link
+          href="/admin/uploaded-images"
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            pathname === "/admin/uploaded-images"
+              ? "text-primary"
+              : "text-muted-foreground"
+          )}
+        >
+          Delte bilder
+        </Link>
+        <Link
           href="/admin/settings"
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
