@@ -5,6 +5,8 @@ export async function getUploadedImagesGroupedByBatch() {
   const images = await db.uploadedImage.findMany({
     orderBy: { createdAt: "desc" },
   });
+
+  console.log({ images });
   // Group by batchId
   const batches: Record<string, typeof images> = {};
   for (const img of images) {

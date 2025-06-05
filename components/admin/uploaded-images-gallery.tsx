@@ -9,6 +9,7 @@ export function UploadedImagesGallery({
 }: {
   batches: Record<string, any[]>;
 }) {
+  console.log({ batches });
   // State for selected batch and pagination
   const batchIds = Object.keys(batches);
   const [selectedBatchId, setSelectedBatchId] = useState(batchIds[0] || "");
