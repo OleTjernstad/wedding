@@ -1,5 +1,5 @@
-import QRCode from "@/components/qr-code";
 import Image from "next/image";
+import QRCode from "@/components/qr-code";
 
 export default function PrintCard() {
   return (
@@ -24,7 +24,7 @@ export default function PrintCard() {
             Takk for at du deler!
           </h1>
           <p className="text-lg text-gray-700 mb-8 text-center max-w-xs">
-            Fint om dere deler bilder dere tar i dag med oss
+            Fint om dere deler bilder dere tar i dag
           </p>
           <div className="bg-white p-4 rounded-lg shadow-md">
             <QRCode
