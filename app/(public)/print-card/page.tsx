@@ -14,7 +14,7 @@ export default function PrintCard() {
           height: "297mm", // A4 height
           maxWidth: "100vw",
           maxHeight: "100vh",
-          gap: "12mm", // 6mm white space around each card
+          gap: "30px", // 6mm white space around each card
           background: "white", // ensure white background for print
           boxSizing: "border-box",
         }}
@@ -26,7 +26,7 @@ export default function PrintCard() {
             style={{
               aspectRatio: "1/1.4",
               minWidth: 0,
-              margin: "6mm",
+              // margin: "30px",
               boxSizing: "border-box",
               // Remove shadow for clean cut lines
             }}
@@ -52,7 +52,8 @@ export default function PrintCard() {
               <div className="bg-white p-4 rounded-lg shadow-md">
                 <QRCode
                   url={
-                    (process.env.NEXT_PUBLIC_SERVER_URL ?? "") + "/upload-images"
+                    (process.env.NEXT_PUBLIC_SERVER_URL ?? "") +
+                    "/upload-images"
                   }
                 />
               </div>
