@@ -8,19 +8,28 @@ export default function PrintCard() {
       style={{ width: "100vw", height: "100vh" }}
     >
       <div
-        className="grid grid-cols-2 grid-rows-2 gap-4 w-full h-full print:gap-0"
+        className="grid grid-cols-2 grid-rows-2 w-full h-full"
         style={{
           width: "210mm", // A4 width
           height: "297mm", // A4 height
           maxWidth: "100vw",
           maxHeight: "100vh",
+          gap: "12mm", // 6mm white space around each card
+          background: "white", // ensure white background for print
+          boxSizing: "border-box",
         }}
       >
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="flex flex-col items-center justify-center border border-gray-400 bg-white rounded-lg shadow-lg p-8 relative w-full h-full max-w-full max-h-full"
-            style={{ aspectRatio: "1/1.4", minWidth: 0 }}
+            className="flex flex-col items-center justify-center border border-gray-400 bg-white rounded-lg relative w-full h-full max-w-full max-h-full"
+            style={{
+              aspectRatio: "1/1.4",
+              minWidth: 0,
+              margin: "6mm",
+              boxSizing: "border-box",
+              // Remove shadow for clean cut lines
+            }}
           >
             <Image
               src="/android-chrome-192x192.png"
