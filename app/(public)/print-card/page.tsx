@@ -44,10 +44,10 @@ export default function PrintCard() {
             />
             <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
               <h1 className="font-bold text-2xl text-purple-800 mb-4 text-center">
-                Takk for at du deler!
+                Vi ønsker oss bilder,
               </h1>
               <p className="text-lg text-gray-700 mb-8 text-center max-w-xs">
-                Fint om dere deler bilder dere tar i dag
+                Vil du dele med oss?
               </p>
               <div className="bg-white p-4 rounded-lg shadow-md">
                 <QRCode
