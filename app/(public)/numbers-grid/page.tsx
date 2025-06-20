@@ -1,9 +1,14 @@
 "use client";
+
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export default function NumbersGrid() {
-  // 3cm in px at 96dpi ≈ 113px
-  const numbers = Array.from({ length: 100 }, (_, i) => i + 1);
+  const searchParams = useSearchParams();
+  // Get the 'length' param from the URL, default to 100 if not present
+  const lengthParam = searchParams.get("length");
+  const numbersLength = lengthParam ? parseInt(lengthParam, 10) : 100;
+  const numbers = Array.from({ length: numbersLength }, (_, i) => i + 1);
 
   return (
     <>
