@@ -66,7 +66,7 @@ export function DropZone({ setImages, disabled, children }: DropZoneProps) {
         <span className="ml-4 text-gray-500 text-sm">
           {disabled
             ? "Maks antall bilder nådd. Last opp før du legger til flere."
-            : "Dra inn eller klikk for å velge bilder (maks 20)"}
+            : "Dra inn eller klikk for å velge bilder (jpg, png, webp). Maks 10 MB per bilde."}
         </span>
         <input {...getInputProps()} multiple disabled={disabled} />
       </div>
