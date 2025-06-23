@@ -39,3 +39,25 @@ export async function saveReceivedGift(formData: ReceivedGiftFormValues) {
     return { error: "error" };
   }
 }
+
+export async function updateReceivedGiftComment({
+  id,
+  comment,
+}: {
+  id: string;
+  comment: string;
+}) {
+  await auth.protect();
+  if (!id) return { error: "missing-id" };
+  try {
+    const updated = await db.receivedGift.update({
+      where: { id },
+      data: { comment },
+    });
+    revalidateTag("received-gifts");
+    return { success: true, receivedGift: updated };
+  } catch (err: any) {
+    console.log(err);
+    return { error: "error" };
+  }
+}
