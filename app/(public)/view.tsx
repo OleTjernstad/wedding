@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Category } from "@prisma/client";
-import CategoryTabs from "@/components/category-tabs";
 import QRCode from "@/components/qr-code";
 import SearchBar from "@/components/search-bar";
 import { useState } from "react";
@@ -25,12 +24,21 @@ export function View({ categories }: ViewProps) {
         </h1>
         <p className="text-xl text-purple-600 mb-6">Ønskeliste</p>
         <p className="text-gray-600 mb-8">21. juni 2025</p>
-        <SearchBar onSearch={handleSearch} />
+        {/* <SearchBar onSearch={handleSearch} /> */}
       </div>
 
       {/* Registry Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <CategoryTabs searchQuery={searchQuery} categories={categories} />
+        {/* <CategoryTabs searchQuery={searchQuery} categories={categories} /> */}
+
+        <div className="max-w-2xl mx-auto bg-purple-50 rounded-lg p-8 text-center mb-12">
+          <h2 className="text-2xl font-bold text-purple-800 mb-4 font-handwriting">
+            Takk for alle gavene vi fikk, og det huggale selskapet.
+          </h2>
+          <p className="text-lg text-purple-700 mb-2">
+            Nå skal vi la alt synke inn og plutselig dukker det opp et takkekort
+          </p>
+        </div>
 
         {/* Share Section */}
         <div className="mt-16 bg-purple-50 rounded-lg p-8 text-center">
